@@ -1,12 +1,20 @@
-import { Outlet } from "react-router-dom";
+import { AppSidebar } from '@/components/custom/AppSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Outlet } from 'react-router-dom';
 
 
 const Layout = () => {
-    return (
-        <div>
-            <Outlet/>
-        </div>
-    );
+  return (
+    <SidebarProvider >
+      <AppSidebar />
+      <main className='w-full p-4'>
+        <SidebarTrigger />
+      <Outlet/>
+      </main>
+    </SidebarProvider>
+  );
 };
 
 export default Layout;
+
+

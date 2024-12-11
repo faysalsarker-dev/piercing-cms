@@ -93,28 +93,28 @@ const AuthContext = ({ children }) => {
     return data;
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        const loggedEmail = { email: currentUser.email };
-        axiosSecure.post("/jwt", loggedEmail).then((res) => {
-          console.log("token response", res.data);
-        });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  //     setUser(currentUser);
+  //     if (currentUser) {
+  //       const loggedEmail = { email: currentUser.email };
+  //       axiosSecure.post("/jwt", loggedEmail).then((res) => {
+  //         console.log("token response", res.data);
+  //       });
 
-        setLoading(false);
-      } else {
-        setLoading(false);
-        setUser(null);
-        axiosSecure.post("/logout").then((res) => {
-          console.log(res.data);
-        });
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [user, axiosSecure]);
+  //       setLoading(false);
+  //     } else {
+  //       setLoading(false);
+  //       setUser(null);
+  //       axiosSecure.post("/logout").then((res) => {
+  //         console.log(res.data);
+  //       });
+  //     }
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [user, axiosSecure]);
 
   const contextData = {
     createUser,
