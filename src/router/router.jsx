@@ -1,7 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import Home from "../pages/home/Home";
 import Layout from "../pages/layout/Layout";
-import Users from "@/pages/users/Users";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import StockManagement from "@/pages/StockManagement/StockManagement";
+import AddStock from "@/pages/StockManagement/AddStock";
+import Categories from "@/pages/categories/Categories";
+import SalesManagement from "@/pages/salesManagement/SalesManagement";
 
 
 const router = createBrowserRouter([
@@ -12,12 +15,24 @@ const router = createBrowserRouter([
     children: [
         {
             index:true,
-            element:<Home/>
+            element:<Dashboard/>
         },
         {
-            path:'/users',
-            element:<Users/>
+            path:'/stock-management',
+            element:<StockManagement/>
         },
+        {
+            path:'/stock-management/add-product',
+            element:<AddStock/>
+        },
+        {
+            path:'/categories',
+            element:<Categories/>
+        },
+        {
+          path:'/sale-management',
+          element:<SalesManagement/>
+      },
     ],
   },
 

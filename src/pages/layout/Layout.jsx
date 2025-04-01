@@ -7,9 +7,11 @@ const Layout = () => {
   return (
     <SidebarProvider >
       <AppSidebar />
-      <main className='w-full p-4'>
-        <SidebarTrigger />
-      <Outlet/>
+      <main className='w-full'>
+<div className='bg-sidebar p-4 shadow-lg'>
+          <SidebarTrigger />
+  
+</div>      <Outlet/>
       </main>
     </SidebarProvider>
   );

@@ -1,4 +1,4 @@
-import { User, DollarSign, CreditCard, Sliders, LogOut, Home } from "lucide-react";
+import {  DollarSign, CreditCard, Sliders, LogOut, Home } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,36 +19,40 @@ const items = [
     icon: Home,
   },
   {
-    title: "Users",
-    url: "/users",
-    icon: User,
+    title: "Stock Management",
+    url: "/stock-management",
+    icon: Sliders,
   },
   {
-    title: "Deposit Requests",
-    url: "/deposit-requests",
+    title: "Sales Management",
+    url: "/sale-management",
+   
     icon: DollarSign,
   },
   {
-    title: "Withdrawal Requests",
-    url: "/withdrawal-requests",
-    icon: CreditCard,
+    title: "Categories",
+    url: "/categories",
+    
+   
+    icon: DollarSign,
   },
   {
-    title: "Slider Management",
-    url: "/slider-management",
-    icon: Sliders,
+    title: "Reports & Analytics",
+    url: "/reports",
+    icon: CreditCard,
   },
+
 ];
 
 export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-lg font-bold text-gray-800 mb-4">
-            Casino Management
+          <SidebarGroupLabel collapsible className="text-lg font-bold text-gray-800 mb-4 ">
+            Gold Management 
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -59,13 +63,13 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`flex items-center gap-3 px-4 py-3 rounded-md transition-all ${
                         isActive
-                          ? "bg-blue-600 text-white"
+                          ? "bg-primary"
                           : "text-gray-700 hover:bg-gray-200"
                       }`}
                       asChild
                     >
                       <Link to={item.url}>
-                        <item.icon className="w-5 h-5" />
+                        <item.icon className={`w-7 h-7`} />
                         <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>

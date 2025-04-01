@@ -13,6 +13,7 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+			primary: 'hsl(var(--primary))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -28,4 +29,3 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 }
-
