@@ -5,6 +5,7 @@ import StockManagement from "@/pages/StockManagement/StockManagement";
 import AddStock from "@/pages/StockManagement/AddStock";
 import Categories from "@/pages/categories/Categories";
 import SalesManagement from "@/pages/salesManagement/SalesManagement";
+import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
 
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         {
           path:'/sale-management',
           element:<SalesManagement/>
+      },
+        {
+          path:'/reports',
+          element:<ReportAnalytics/>
       },
     ],
   },

@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
 import { Pencil, Trash2 } from "lucide-react";
+import AddNewSale from "./AddNewSale";
 
 // Fake Data for Sales
 const fakeSalesData = [
@@ -141,6 +142,8 @@ export default function SalesManagement() {
           ))}
         </TableBody>
       </Table>
+
+      <AddNewSale/>
     </div>
   );
 }

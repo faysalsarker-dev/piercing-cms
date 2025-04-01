@@ -26,16 +26,18 @@ export default function AddStock() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
-      <Card className="w-full max-w-3xl shadow-xl rounded-lg p-10 bg-white">
+    <div className="flex items-center justify-center ">
+
+
+      <Card className="w-full  shadow-xl rounded-lg p-5 bg-white">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-semibold">Add New Stock</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-3 gap-5">
             <div className="col-span-2 md:col-span-1">
               <Label>Product Name</Label>
-              <Input className="h-12 text-lg" {...register("productName", { required: "Product name is required" })} placeholder="Enter product name" />
+              <Input className="h-12  text-lg " {...register("productName", { required: "Product name is required" })} placeholder="Enter product name" />
               {errors.productName && <p className="text-red-500 text-sm">{errors.productName.message}</p>}
             </div>
 
@@ -65,16 +67,9 @@ export default function AddStock() {
               {errors.weight && <p className="text-red-500 text-sm">{errors.weight.message}</p>}
             </div>
 
-            <div>
-              <Label>Production Year</Label>
-              <Input className="h-12 text-lg" type="number" {...register("productionYear")} placeholder="Enter production year" />
-            </div>
+          
 
-            <div>
-              <Label>Image Upload</Label>
-              <Input className="h-12 text-lg" type="file" accept="image/*" onChange={handleImageUpload} />
-              {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-lg shadow" />}
-            </div>
+       
 
             <div>
               <Label>Karat</Label>
@@ -97,13 +92,17 @@ export default function AddStock() {
               <Input className="h-12 text-lg" type="number" {...register("roti")} placeholder="Enter roti" />
             </div>
 
-            <div className="col-span-2">
+            <div >
               <Label>Cost</Label>
               <Input className="h-12 text-lg" type="number" {...register("Cost", { required: "Cost is required" })} placeholder="Enter cost" />
               {errors.Cost && <p className="text-red-500 text-sm">{errors.Cost.message}</p>}
             </div>
-
-            <div className="col-span-2">
+            <div className="col-span-2 ">
+              <Label>Image Upload</Label>
+              <Input className="h-12 text-lg" type="file" accept="image/*" onChange={handleImageUpload} />
+              {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-lg shadow" />}
+            </div>
+            <div className="col-span-3">
               <Button type="submit" className="w-full text-xl h-14">Submit</Button>
             </div>
           </form>

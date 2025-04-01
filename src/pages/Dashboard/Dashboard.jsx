@@ -1,24 +1,30 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { TrendingUp, ShoppingCart, Box, DollarSign } from "lucide-react";
+import { BarChart, Bar, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const data = [
-  { name: "Jan", sales: 400, stock: 2400 },
-  { name: "Feb", sales: 300, stock: 2210 },
-  { name: "Mar", sales: 200, stock: 2290 },
-  { name: "Apr", sales: 278, stock: 2000 },
-  { name: "May", sales: 189, stock: 2181 },
-  { name: "Jun", sales: 239, stock: 2500 },
-];
 
 export default function Dashboard() {
+  const chartData = [
+    { month: "First Week", desktop: 186, mobile: 80 },
+    { month: "Second Week", desktop: 305, mobile: 200 },
+    { month: "Third Week", desktop: 237, mobile: 120 },
+    { month: "Fourth Week", desktop: 73, mobile: 190 },
+  ];
+
+  const chartConfig = {
+    desktop: { label: "Desktop", color: "hsl(var(--chart-1))" },
+    mobile: { label: "Mobile", color: "hsl(var(--chart-2))" },
+  };
+
   return (
     <div className="p-6 grid gap-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Total Sales</CardTitle>
+            <CardTitle><ShoppingCart className="inline-block mr-2" /> This Month Sales</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">$12,340</p>
@@ -26,7 +32,7 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Total Stock</CardTitle>
+            <CardTitle><Box className="inline-block mr-2" /> This Month Stock</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">5,420</p>
@@ -34,7 +40,7 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Monthly Revenue</CardTitle>
+            <CardTitle><DollarSign className="inline-block mr-2" /> This Month Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">$3,890</p>
@@ -42,20 +48,25 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Y-Axis Line Chart */}
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">Sales & Stock Overview</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" />
-            <Tooltip />
-            <Line type="monotone" dataKey="sales" stroke="#4F46E5" strokeWidth={2} />
-            <Line type="monotone" dataKey="stock" stroke="#22C55E" strokeWidth={2} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      {/* Chart */}
+      <CardContent>
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={chartData}>
+      <CartesianGrid vertical={false} />
+      <XAxis
+        dataKey="month"
+        tickLine={false}
+        tickMargin={10}
+        axisLine={false}
+        tickFormatter={(value) => value?.slice(0, 3)}
+      />
+      <Tooltip cursor={false} />
+      <Bar dataKey="desktop" fill="hsl(var(--chart-1))" radius={4} />
+      <Bar dataKey="mobile" fill="hsl(var(--chart-2))" radius={4} />
+    </BarChart>
+  </ResponsiveContainer>
+</CardContent>
+
 
       {/* Data Table */}
       <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md">

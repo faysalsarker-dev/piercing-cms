@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,31 +8,66 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
-
-const initialCategories = [
-  { id: 1, name: "Gold", status: "Active" },
-  { id: 2, name: "Silver", status: "Inactive" },
-];
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useAxios from "@/hooks/useAxios/useAxios";
 
 export default function Categories() {
-  const [categories, setCategories] = useState(initialCategories);
   const [isOpen, setIsOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const { register, handleSubmit, reset, setValue } = useForm();
+  
+  const { register, handleSubmit, reset, setValue, watch } = useForm();
+  const axiosSecure = useAxios();
 
-  const onSubmit = (data) => {
-    if (editingCategory) {
-      setCategories(categories.map((cat) => (cat.id === editingCategory.id ? { ...data, id: editingCategory.id } : cat)));
-      toast.success("Category updated successfully");
-    } else {
-      setCategories([...categories, { ...data, id: categories.length + 1 }]);
-      toast.success("Category added successfully");
-    }
-    setIsOpen(false);
-    reset();
-    setEditingCategory(null);
+  // Fetch Categories
+  const { data: categories = [], isLoading ,isError} = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/categories");
+      return response.data;
+    },
+    staleTime: 1200000,
+    cacheTime: 3600000,
+  });
+
+  // Add or Update Category
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (info) => {
+      if (editingCategory) {
+        return await axiosSecure.put(`/categories/${editingCategory.id}`, info);
+      }
+      return await axiosSecure.post(`/categories`, info);
+    },
+    onSuccess: () => {
+      toast.success(editingCategory ? "Category updated successfully." : "Category added successfully.");
+      reset();
+      setIsOpen(false);
+      setEditingCategory(null);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("An error occurred while processing the request.");
+    },
+  });
+
+  // Delete Category
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      return await axiosSecure.delete(`/categories/${id}`);
+    },
+    onSuccess: () => {
+      toast.success("Category deleted successfully.");
+      setShowDeleteModal(false);
+      setCategoryToDelete(null);
+    },
+    onError: () => {
+      toast.error("Failed to delete category.");
+    },
+  });
+
+  const onSubmit = async (data) => {
+    await mutateAsync(data);
   };
 
   const handleEdit = (category) => {
@@ -48,16 +83,11 @@ export default function Categories() {
   };
 
   const confirmDelete = () => {
-    setCategories(categories.filter((category) => category.id !== categoryToDelete.id));
-    toast.success("Category deleted successfully");
-    setShowDeleteModal(false);
-    setCategoryToDelete(null);
+    deleteMutation.mutate(categoryToDelete.id);
   };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setCategoryToDelete(null);
-  };
+  if(isError){
+    return <p>Error loading categories.</p>;
+  }
 
   return (
     <div className="p-6 w-full">
@@ -73,10 +103,10 @@ export default function Categories() {
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Label>Name</Label>
-              <Input {...register("name", { required: true })} placeholder="Enter category name" />
+              <Input className="h-12" {...register("name", { required: true })} placeholder="Enter category name" />
               <Label>Status</Label>
-              <Select {...register("status", { required: true })}>
-                <SelectTrigger>
+              <Select value={watch("status") || ""} onValueChange={(value) => setValue("status", value)}>
+                <SelectTrigger className="h-12">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,47 +114,55 @@ export default function Categories() {
                   <SelectItem value="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              <Button className="mt-4 w-full" type="submit">{editingCategory ? "Update" : "Add"}</Button>
+              <Button className="mt-4 w-full bg-primary" type="submit" disabled={isPending}>
+                {isPending ? "Processing..." : editingCategory ? "Update" : "Add"}
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
-      <Table className="w-full text-lg">
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {categories.map((category) => (
-            <TableRow key={category.id}>
-              <TableCell>{category.id}</TableCell>
-              <TableCell>{category.name}</TableCell>
-              <TableCell>{category.status}</TableCell>
-              <TableCell className="flex gap-4">
-                <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
-                  <Pencil className="w-5 h-5" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(category)}>
-                  <Trash2 className="w-5 h-5 text-red-500" />
-                </Button>
-              </TableCell>
+      {isLoading ? (
+        <p>Loading categories...</p>
+      ) : (
+        <Table className="w-full text-lg">
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {categories?.map((category) => (
+              <TableRow key={category.id}>
+                <TableCell>{category.id}</TableCell>
+                <TableCell>{category.name}</TableCell>
+                <TableCell>{category.status}</TableCell>
+                <TableCell className="flex gap-4">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
+                    <Pencil className="w-5 h-5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(category)}>
+                    <Trash2 className="w-5 h-5 text-red-500" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
 
-      {/* Custom Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-800">
           <div className="bg-white p-6 rounded-lg w-[400px]">
             <h3 className="text-lg font-semibold">Are you sure you want to delete this category?</h3>
             <div className="mt-4 flex justify-between">
-              <Button onClick={confirmDelete} className="bg-red-500 text-white">Yes, Delete</Button>
-              <Button onClick={cancelDelete} className="bg-gray-500 text-white">Cancel</Button>
+              <Button onClick={confirmDelete} className="bg-red-500 text-white" disabled={deleteMutation.isPending}>
+                {deleteMutation.isPending ? "Deleting..." : "Yes, Delete"}
+              </Button>
+              <Button onClick={() => setShowDeleteModal(false)} className="bg-gray-500 text-white">Cancel</Button>
             </div>
           </div>
         </div>
