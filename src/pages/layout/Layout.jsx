@@ -1,4 +1,5 @@
 import { AppSidebar } from '@/components/custom/AppSidebar';
+import TopBar from '@/components/custom/TopBar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Outlet } from 'react-router-dom';
 
@@ -8,10 +9,8 @@ const Layout = () => {
     <SidebarProvider >
       <AppSidebar />
       <main className='w-full'>
-<div className='bg-sidebar p-4 shadow-lg'>
-          <SidebarTrigger />
-  
-</div>      <Outlet/>
+<TopBar/> 
+     <Outlet/>
       </main>
     </SidebarProvider>
   );
