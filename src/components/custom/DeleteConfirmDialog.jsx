@@ -10,10 +10,11 @@ import {
   import { toast } from "react-hot-toast"
 import useAxios from "@/hooks/useAxios"
 import PropTypes from "prop-types"
+import { useNavigate } from "react-router-dom"
   
-  export function DeleteConfirmDialog({ open, onClose,url, id, refetch }) {
+  export function DeleteConfirmDialog({ open, onClose,url, id, refetch,navigateLink }) {
 
-
+const navigate = useNavigate()
     const axiosCommon = useAxios()
     const { mutateAsync, isPending } = useMutation({
       mutationFn: async () => {
@@ -24,6 +25,12 @@ import PropTypes from "prop-types"
         toast.success("Deleted successfully.")
         onClose()
         refetch?.()
+        if (navigateLink) {
+           navigate(navigateLink)
+         
+        }
+         
+    
       },
       onError: () => {
         toast.error("An error occurred while deleting.")
@@ -77,4 +84,5 @@ import PropTypes from "prop-types"
     url: PropTypes.string.isRequired,
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     refetch: PropTypes.func,
+    navigateLink: PropTypes.any,
   }

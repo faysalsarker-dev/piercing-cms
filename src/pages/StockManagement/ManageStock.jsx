@@ -18,6 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { debounce } from 'lodash';
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
+import { Link } from "react-router-dom";
 
 const ManageStock = () => {
   const [search, setSearch] = useState("");
@@ -150,7 +151,7 @@ const ManageStock = () => {
           <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
           <TableCell className="p-3 flex space-x-2 items-center">
             <Button variant="outline" size="icon" className="p-1">
-              <Eye size={16} />
+             <Link to={`/product/${item?._id}`}> <Eye size={16} /></Link>
             </Button>
             <Button variant="outline" size="icon" className="p-1">
               <Edit size={16} />

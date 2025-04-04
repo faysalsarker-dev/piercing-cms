@@ -10,6 +10,16 @@ import useAxios from "@/hooks/useAxios";
 import { debounce } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"
+import { format } from "date-fns";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function SalesManagement() {
   const [search, setSearch] = useState("");
@@ -94,6 +104,7 @@ export default function SalesManagement() {
         <SelectItem value={null}>All</SelectItem>
         <SelectItem value="full">Full</SelectItem>
         <SelectItem value="emi">EMI</SelectItem>
+        <SelectItem value="dueDate">Today&apos;s EMI Due</SelectItem>
       </SelectContent>
     </Select>
 
@@ -161,15 +172,28 @@ export default function SalesManagement() {
             <TableRow key={sale._id}>
               <TableCell>{sale?.clientName}</TableCell>
               <TableCell>{sale?.clientPhone}</TableCell>
-              <TableCell className='flex flex-col'>
-              <Badge
-variant="secondary"  className={sale?.paymentType.toLowerCase() === "full" ? "text-green-600" : "text-red-600"}
->
-  {sale?.paymentType}
-</Badge>
-              
-                
-                 {sale?.dueDate} </TableCell>
+              <TableCell className="flex  jusfify-center items-center gap-2">
+  <Badge
+    variant="secondary"
+    className={`w-fit px-3 py-1 text-sm font-semibold ${
+      sale?.paymentType.toLowerCase() === "full"
+        ? "text-green-600 bg-green-100"
+        : "text-red-600 bg-red-100"
+    }`}
+  >
+    {sale?.paymentType}
+  </Badge>
+
+ 
+  {sale?.paymentType.toLowerCase() === "emi" && sale?.dueDate && (
+    <span className="text-sm text-gray-600">
+      {format(new Date(sale.dueDate), "EEEE, MMMM d, yyyy")}
+    </span>
+  )}
+</TableCell>
+
+
+
               <TableCell>{sale?.product.productName}</TableCell>
               <TableCell>{sale?.price}</TableCell>
               <TableCell className="flex gap-4">
@@ -194,33 +218,27 @@ variant="secondary"  className={sale?.paymentType.toLowerCase() === "full" ? "te
 
 </div>
 
-      {/* Table */}
+     
    
-      {/* Pagination */}
-      <div className="flex justify-center mt-4 gap-4">
-        <Button disabled={currentPage === 1} onClick={() => setCurrentPage((prev) => prev - 1)}>Previous</Button>
-        <span>Page {currentPage} of {data?.totalPages}</span>
-        <Button disabled={currentPage === data?.totalPages} onClick={() => setCurrentPage((prev) => prev + 1)}>Next</Button>
-      </div>
 
 
-      {/* <Pagination className={'mt-5'}>
+      <Pagination className={'mt-5'}>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} />
+            <PaginationPrevious onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={data?.totalPages === 1} />
           </PaginationItem>
-          {[...Array(data.totalPages)].map((_, index) => (
+          {[...Array(data?.totalPages)].map((_, index) => (
             <PaginationItem key={index}>
-              <PaginationLink onClick={() => setCurrentPage(index + 1)} className={page === index + 1 ? "bg-blue-500 text-white" : ""}>
+              <PaginationLink onClick={() => setCurrentPage(index + 1)} className={currentPage === index + 1 ? "bg-blue-500 text-white" : ""}>
                 {index + 1}
               </PaginationLink>
             </PaginationItem>
           ))}
           <PaginationItem>
-            <PaginationNext onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page === totalPages} />
+            <PaginationNext onClick={() => setCurrentPage((prev) => Math.min(prev + 1, data?.totalPages))} disabled={currentPage === data?.totalPages} />
           </PaginationItem>
         </PaginationContent>
-      </Pagination> */}
+      </Pagination>
 
 
 

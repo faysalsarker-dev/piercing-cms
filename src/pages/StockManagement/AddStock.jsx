@@ -8,11 +8,42 @@ import { Label } from "@/components/ui/label";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
 import toast from "react-hot-toast";
+import Barcode from "react-barcode";
 
 export default function AddStock() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
   const axiosSecure = useAxios();
+
+
+  const { data:barcode } = useQuery({
+    queryKey: ["barcode"],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/stocks/barcode"  
+      );
+      
+      return response.data.barcode;
+    },
+ 
+  });
+
+
+
+
+
+
+
+console.log(barcode,'barcode');
+
+
+
+
+
+
+
+
+
+
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -21,6 +52,18 @@ export default function AddStock() {
       return response.data || [];
     },
   });
+
+
+
+
+
+
+
+
+
+
+
+
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (formData) => {
@@ -39,7 +82,7 @@ export default function AddStock() {
 
   const onSubmit = (data) => {
     const formData = new FormData();
-  
+   
     // Append regular fields
     Object.keys(data).forEach((key) => {
       if (key !== "image") {
@@ -68,7 +111,7 @@ export default function AddStock() {
     <div className="flex items-center justify-center p-4">
       <Card className="w-full  shadow-xl rounded-lg p-6 bg-white">
         <CardHeader>
-          <CardTitle className="text-center text-3xl font-semibold text-gray-700">Add New Stock</CardTitle>
+          <CardTitle className="text-start text-3xl font-semibold text-gray-700">Add New Stock</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -80,8 +123,15 @@ export default function AddStock() {
 
     <div>
               <Label>Barcode <span className="text-red-500">*</span></Label>
-              <Input {...register("barcode", { required: "Barcode is required" })} placeholder="Enter barcode" className="h-12 text-lg" />
+              <Input value={barcode} {...register("barcode")} placeholder="Enter barcode" className="h-12 text-lg" />
               {errors.barcode && <p className="text-red-500 text-sm">{errors.barcode.message}</p>}
+            
+              <Barcode value={barcode} 
+              
+              // displayValue={false}
+              
+              
+              />
             </div>
 
             <div>
@@ -103,29 +153,39 @@ export default function AddStock() {
 
             <div>
               <Label>Weight (grams) <span className="text-red-500">*</span></Label>
-              <Input type="number" step="any" {...register("weight", { required: "Weight is required" })} placeholder="Enter weight" className="h-12 text-lg" />
+              <Input
+               defaultValue={0}
+              type="number" step="any" {...register("weight", { required: "Weight is required" })} placeholder="Enter weight" className="h-12 text-lg" />
               {errors.weight && <p className="text-red-500 text-sm">{errors.weight.message}</p>}
             </div>
 
             <div>
               <Label>Karat <span className="text-red-500">*</span></Label>
-              <Input step="any" {...register("karat", { required: "Karat is required" })} placeholder="Enter karat" className="h-12 text-lg" />
+              <Input 
+              
+              step="any" {...register("karat", { required: "Karat is required" })} placeholder="Enter karat" className="h-12 text-lg" />
               {errors.karat && <p className="text-red-500 text-sm">{errors.karat.message}</p>}
             </div>
 
             <div>
               <Label>Bhori</Label>
-              <Input type="number" step="any" {...register("bhori")} placeholder="Enter bhori" className="h-12 text-lg" />
+              <Input
+               defaultValue={0}
+              type="number" step="any" {...register("bhori")} placeholder="Enter bhori" className="h-12 text-lg" />
             </div>
 
             <div>
               <Label>Tola</Label>
-              <Input type="number" step="any" {...register("tola")} placeholder="Enter tola" className="h-12 text-lg" />
+              <Input 
+               defaultValue={0}
+              type="number" step="any" {...register("tola")} placeholder="Enter tola" className="h-12 text-lg" />
             </div>
 
             <div>
               <Label>Roti</Label>
-              <Input type="number" step="any" {...register("roti")} placeholder="Enter roti" className="h-12 text-lg" />
+              <Input
+               defaultValue={0}
+               type="number" step="any" {...register("roti")} placeholder="Enter roti" className="h-12 text-lg" />
             </div>
 
             <div>

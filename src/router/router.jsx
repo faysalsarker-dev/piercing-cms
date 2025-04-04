@@ -7,6 +7,8 @@ import Categories from "@/pages/categories/Categories";
 import SalesManagement from "@/pages/salesManagement/SalesManagement";
 import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
 import AddNewSale from "@/pages/salesManagement/AddNewSale";
+import SalesDetails from "@/pages/SinglePage/SalesDetails";
+import ProductDetails from "@/pages/SinglePage/ProductDetails";
 
 
 const router = createBrowserRouter([
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
         {
           path:'/reports',
           element:<ReportAnalytics/>
+      },
+        {
+          path:'/sales/:id',
+          element:<SalesDetails/>
+      },
+        {
+          path:'/product/:id',
+          element:<ProductDetails/>
       },
     ],
   },
