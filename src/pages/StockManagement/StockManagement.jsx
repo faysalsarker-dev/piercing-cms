@@ -1,30 +1,18 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AddStock from "./AddStock";
+
+import { Link } from "react-router-dom";
 import ManageStock from "./ManageStock";
+import { Button } from "@/components/ui/button";
 
 export default function StockManagement() {
   return (
-    <div className="p-6 space-y-6">
-      {/* Tabs Navigation */}
-      <Tabs defaultValue="manage-stock" className="w-full  ">
-        <TabsList className=" py-6">
-          <TabsTrigger value="manage-stock" className="px-4 py-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-white ">
-            Manage Stock
-          </TabsTrigger>
-          <TabsTrigger value="add-stock" className="px-4 py-2 text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-white ">
-            Add Product
-          </TabsTrigger>
-        </TabsList>
+ <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Stock Management</h2>
+        <Link to='/stock-management/add-product'><Button className='bg-primary'>Add New Sale</Button></Link>
+      </div>
 
-        {/* Tabs Content */}
-        <TabsContent value="manage-stock" className="mt-4">
-          <ManageStock />
-        </TabsContent>
+<ManageStock />
 
-        <TabsContent value="add-stock" className="mt-4">
-          <AddStock />
-        </TabsContent>
-      </Tabs>
-    </div>
+ </div>
   );
 }

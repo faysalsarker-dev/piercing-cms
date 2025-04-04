@@ -1,173 +1,228 @@
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Edit, Eye, Search, Trash2 } from "lucide-react";
-
+import { Edit, Eye,  Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-const stockData = [
-    {
-      productName: "Gold Ring",
-      category: "Jewelry",
-      barcode: "123456789",
-      weight: 5.2,
-      image: "/gold-ring.jpg",
-      karat: "18K",
-      bhori: 1,
-      tola: 2,
-      roti: 5,
-      Cost: 1500,
-    },
-    {
-      productName: "Diamond Necklace",
-      category: "Jewelry",
-      barcode: "987654321",
-      weight: 10.5,
-      image: "/diamond-necklace.jpg",
-      karat: "24K",
-      bhori: 0,
-      tola: 1,
-      roti: 3,
-      Cost: 3500,
-    },
-  ];
-
+import useAxios from "@/hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { debounce } from 'lodash';
+import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 
 const ManageStock = () => {
-
-
-    const [search, setSearch] = useState("");
-    const [filteredStock] = useState(stockData);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [dateSort, setDateSort] = useState("newest");
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   
-    const [category, setCategory] = useState("");
-    const [dateSort, setDateSort] = useState("");
-  
-    const handleSearch = (e) => setSearch(e.target.value);
-    const handleCategoryChange = (value) => setCategory(value);
-    const handleDateSortChange = (value) => setDateSort(value);
+  const axiosSecure = useAxios();
 
-   
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/categories");
+      return response.data || [];
+    },
+  });
 
+  const { data, isLoading,refetch } = useQuery({
+    queryKey: ["stock", search, category, dateSort, page],
+    queryFn: async () => {
+      const response = await axiosSecure.get(`/stocks?page=${page}&limit=${itemsPerPage}&search=${search}&category=${category}&date=${dateSort}`);
+      return response.data || { stocks: [], total: 0 };
+    },
+  });
+  const handleSearch = debounce((value) => setSearch(value), 500);
 
+  const totalPages = Math.ceil((data?.total || 0) / itemsPerPage);
 
-
-
-
-
-
-
-    return (
-        <div>
-                <Card>
-      <CardHeader>
-        <CardTitle>Stock Management</CardTitle>
-      </CardHeader>
-    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Barcode Search Input & Button */}
-        <div className="flex w-full items-center  gap-2">
-          <Input
-            placeholder="Search by barcode..."
-            value={search}
-            onChange={handleSearch}
-            className="w-2/3 h-12 text-lg"
-          />
-          <Button className="w-1/3 h-12 flex justify-center items-center">
-            <Search className="h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Category Selection */}
-   <div className="flex items-center justify-center gap-4">
-          <Select value={category} onValueChange={handleCategoryChange}>
-            <SelectTrigger className="w-full h-12 text-lg">
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="electronics">Electronics</SelectItem>
-              <SelectItem value="clothing">Clothing</SelectItem>
-              <SelectItem value="accessories">Accessories</SelectItem>
-            </SelectContent>
-          </Select>
-  
-          {/* Date Sorting */}
-          <Select value={dateSort} onValueChange={handleDateSortChange}>
-            <SelectTrigger className="w-full h-12 text-lg">
-              <SelectValue placeholder="Sort by Date" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-            </SelectContent>
-          </Select>
-   </div>
-      </CardContent>
-    </Card>
-
-      {/* Stock Table */}
-      <Card className="w-full shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">Stock List</CardTitle>
+  return (
+    <div>
+      <>
        
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <Table className="min-w-full text-sm">
-            <TableHeader>
-              <TableRow className="bg-gray-100">
-                <TableHead className="p-3">Product</TableHead>
-                <TableHead className="p-3">Category</TableHead>
-                <TableHead className="p-3">Weight (g)</TableHead>
-                <TableHead className="p-3">Karat</TableHead>
-                <TableHead className="p-3">Stock (B/T/R)</TableHead>
-                <TableHead className="p-3">Price ($)</TableHead>
-                <TableHead className="p-3">Actions</TableHead>
-                <TableHead className="p-3">Image</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {stockData.map((item, index) => (
-                <TableRow key={index} className="border-b">
-                  <TableCell className="">
-                    <p className="font-medium">{item.productName}</p>
-                    <span className="text-gray-500 text-xs">{item.barcode}</span>
-                  </TableCell>
-                  <TableCell className="p-3">{item.category}</TableCell>
-                  <TableCell className="p-3">{item.weight}</TableCell>
-                  <TableCell className="p-3">{item.karat}</TableCell>
-                  <TableCell className="p-3">
-                    {item.bhori || ''} B / {item.tola || 0} T / {item.roti || 0} R
-                  </TableCell>
-                  <TableCell className="p-3 font-semibold">${item.Cost}</TableCell>
-                  <TableCell className="p-3 flex space-x-2 items-center">
-                    <Button variant="outline" size="icon" className="p-1">
-                      <Eye size={16} />
-                    </Button>
-                    <Button variant="outline" size="icon" className="p-1">
-                      <Edit size={16} />
-                    </Button>
-                    <Button variant="outline" size="icon" className="p-1">
-                      <Trash2 className="text-red-600" size={16} />
-                    </Button>
-                  </TableCell>
-                  <TableCell className="p-3">
-                    {item.image ? (
-                      <img src={item.image} alt={item.productName} width={30} height={30} className="rounded-md" />
-                    ) : (
-                      "No Image"
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
-        </div>
-    );
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {/* Left Side: Search Input */}
+  <div className="flex items-center w-full">
+    <Input
+      placeholder="Search by product name or barcode..."
+      onChange={(e) => handleSearch(e.target.value)}
+      className="w-full h-12 text-lg"
+    />
+  </div>
+
+  {/* Right Side: Category + Date Sort Select */}
+  <div className="flex items-center gap-4 w-full">
+    <Select value={category} onValueChange={(value) => setCategory(value)}>
+      <SelectTrigger className="w-full h-12 text-lg">
+        <SelectValue placeholder="Select Category" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Categories</SelectItem>
+        {categories.map((category) => (
+          <SelectItem key={category._id} value={category.name}>
+            {category.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+
+    <Select value={dateSort} onValueChange={(value) => setDateSort(value)}>
+      <SelectTrigger className="w-full h-12 text-lg">
+        <SelectValue placeholder="Sort by Date" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="newest">Newest First</SelectItem>
+        <SelectItem value="oldest">Oldest First</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</div>
+
+      </>
+
+      <Card className="w-full shadow-lg mt-5">
+      
+        <>
+        <div className="overflow-x-auto ">
+
+{
+  isLoading? (
+  <Table>
+    <TableHeader>
+      <TableRow>
+        {[...Array(8)].map((_, index) => (
+          <TableHead key={index}>
+            <Skeleton className="h-6 w-full" />
+          </TableHead>
+        ))}
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {[...Array(5)].map((_, index) => (
+        <TableRow key={index}>
+          {[...Array(8)].map((_, cellIndex) => (
+            <TableCell key={cellIndex}>
+              <Skeleton className="h-6 w-full" />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table> 
+  ):(
+    <Table className="min-w-full text-sm">
+    <TableHeader>
+      <TableRow className="bg-gray-100">
+        <TableHead className="p-3">Product</TableHead>
+        <TableHead className="p-3">Category</TableHead>
+        <TableHead className="p-3">Weight (g)</TableHead>
+        <TableHead className="p-3">Karat</TableHead>
+        <TableHead className="p-3">Stock (B/T/R)</TableHead>
+        <TableHead className="p-3">Price ($)</TableHead>
+        <TableHead className="p-3">Actions</TableHead>
+        <TableHead className="p-3">Image</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {data?.stocks?.map((item, index) => (
+        <TableRow key={index} className="border-b">
+          <TableCell>
+            <p className="font-medium">{item?.productName}</p>
+            <span className="text-gray-500 text-xs">{item?.barcode}</span>
+          </TableCell>
+          <TableCell className="p-3">{item?.category}</TableCell>
+          <TableCell className="p-3">{item?.weight}(g)</TableCell>
+          <TableCell className="p-3">{item?.karat}</TableCell>
+          <TableCell className="p-3">{item?.bhori || ''} B / {item?.tola || 0} T / {item?.roti || 0} R</TableCell>
+          <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
+          <TableCell className="p-3 flex space-x-2 items-center">
+            <Button variant="outline" size="icon" className="p-1">
+              <Eye size={16} />
+            </Button>
+            <Button variant="outline" size="icon" className="p-1">
+              <Edit size={16} />
+            </Button>
+            <Button
+  variant="outline"
+  size="icon"
+  className="p-1"
+  onClick={() => {
+    setDeleteId(item._id); // this is the ID of the stock item
+    setOpen(true);          // open the dialog
+  }}
+>
+  <Trash2 className="text-red-600" size={16} />
+</Button>
+
+          </TableCell>
+          <TableCell className="p-3">
+            {item.image ? <img src={item.image} alt={item.productName} width={30} height={30} className="rounded-md" /> : "No Image"}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+
+  )
+}
+
+
+
+
+
+           
+          </div>
+         
+           
+        </>
+
+
+
+        <DeleteConfirmDialog
+  open={open}
+  onClose={() => setOpen(false)}
+  id={deleteId}
+  url={`/stocks`} 
+  refetch={() => refetch()} 
+/>
+
+
+
+
+      </Card>
+
+      <Pagination className={'mt-5'}>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} />
+          </PaginationItem>
+          {[...Array(totalPages)].map((_, index) => (
+            <PaginationItem key={index}>
+              <PaginationLink onClick={() => setPage(index + 1)} className={page === index + 1 ? "bg-blue-500 text-white" : ""}>
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page === totalPages} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
+  );
 };
 
 export default ManageStock;
