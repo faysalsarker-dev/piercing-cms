@@ -9,6 +9,7 @@ import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
 import AddNewSale from "@/pages/salesManagement/AddNewSale";
 import SalesDetails from "@/pages/SinglePage/SalesDetails";
 import ProductDetails from "@/pages/SinglePage/ProductDetails";
+import Login from "@/pages/Auth/Login";
 
 
 const router = createBrowserRouter([
@@ -53,9 +54,13 @@ const router = createBrowserRouter([
           path:'/product/:id',
           element:<ProductDetails/>
       },
+    
     ],
   },
-
+  {
+    path:'/login',
+    element:<Login/>
+},
 ]);
 
 export default router;

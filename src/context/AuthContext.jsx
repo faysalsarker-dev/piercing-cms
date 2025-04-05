@@ -7,6 +7,9 @@ import {
   onAuthStateChanged,
   signOut,
   updateProfile,
+  browserLocalPersistence,
+   browserSessionPersistence,
+   setPersistence
 
 } from "firebase/auth";
 
@@ -22,15 +25,20 @@ const AuthContext = ({ children }) => {
 
 
 
-  // Create user with email and password
+// Create user with email and password
   const createUser = async (email, password) => {
     setLoading(true);
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential;
   };
 
-  const signIn = async (email, password) => {
+  const signIn = async (email, password,rememberMe = false) => {
     setLoading(true);
+    if (rememberMe) {
+      await setPersistence(auth, browserLocalPersistence);
+    } else {
+      await setPersistence(auth, browserSessionPersistence); 
+    }
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential;
   };
@@ -62,28 +70,22 @@ const AuthContext = ({ children }) => {
  
 
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-  //     setUser(currentUser);
-  //     if (currentUser) {
-  //       const loggedEmail = { email: currentUser.email };
-  //       axiosSecure.post("/jwt", loggedEmail).then((res) => {
-  //         console.log("token response", res.data);
-  //       });
-
-  //       setLoading(false);
-  //     } else {
-  //       setLoading(false);
-  //       setUser(null);
-  //       axiosSecure.post("/logout").then((res) => {
-  //         console.log(res.data);
-  //       });
-  //     }
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [user, axiosSecure]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        
+        setLoading(false);
+      } else {
+        setLoading(false);
+        setUser(null);
+       
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
 
   const contextData = {
     createUser,

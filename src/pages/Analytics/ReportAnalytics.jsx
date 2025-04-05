@@ -1,39 +1,27 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { TrendingUp } from "lucide-react";
+import useAxios from "@/hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import { Box, ShoppingCart, TrendingUp } from "lucide-react";
 import { useMemo } from "react";
 import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Label } from "recharts";
 
-const yearlyData = [
-    { month: "Jan", stock: 500, sales: 400 },
-    { month: "Feb", stock: 600, sales: 450 },
-    { month: "Mar", stock: 700, sales: 500 },
-    { month: "Apr", stock: 800, sales: 600 },
-    { month: "May", stock: 650, sales: 550 },
-    { month: "Jun", stock: 700, sales: 620 },
-    { month: "Jul", stock: 750, sales: 700 },
-    { month: "Aug", stock: 800, sales: 750 },
-    { month: "Sep", stock: 850, sales: 800 },
-    { month: "Oct", stock: 900, sales: 850 },
-    { month: "Nov", stock: 950, sales: 900 },
-    { month: "Dec", stock: 1000, sales: 950 },
-  ];
 
 
-  const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-  ]
+  // const chartData = [
+  //   { monthName: "January", desktop: 186, mobile: 80 },
+  //   { month: "February", desktop: 305, mobile: 200 },
+  //   { month: "March", desktop: 237, mobile: 120 },
+  //   { month: "April", desktop: 73, mobile: 190 },
+  //   { month: "May", desktop: 209, mobile: 130 },
+  //   { month: "June", desktop: 214, mobile: 140 },
+  //   { month: "January", desktop: 186, mobile: 80 },
+  //   { month: "February", desktop: 305, mobile: 200 },
+  //   { month: "March", desktop: 237, mobile: 120 },
+  //   { month: "April", desktop: 73, mobile: 190 },
+  //   { month: "May", desktop: 209, mobile: 130 },
+  //   { month: "June", desktop: 214, mobile: 140 },
+  // ]
   
 
 
@@ -42,12 +30,12 @@ const yearlyData = [
 
 
 const chartConfig = {
-    desktop: {
-      label: "Desktop",
+  totalAddedStock: {
+      label: "totalAddedStock",
       color: "hsl(var(--chart-1))",
     },
-    mobile: {
-      label: "Mobile",
+    totalSoldProduct: {
+      label: "totalSoldProduct",
       color: "hsl(var(--chart-2))",
     },
   } 
@@ -97,9 +85,53 @@ const chartConfig = {
 
 export default function ReportAnalytics() {
 
-    const totalVisitors = useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-      }, [])
+const axiosSecure = useAxios()
+
+
+const { data:chartData } = useQuery({
+  queryKey: ["full-report"],
+  queryFn: async () => {
+    const response = await axiosSecure.get(`/reports/full-report`
+    );
+    
+    return response.data;
+  },
+  staleTime: 1200000, 
+  cacheTime: 3600000, 
+});
+
+
+const { data} = useQuery({
+  queryKey: ["inventory-summary"],
+  queryFn: async () => {
+    const response = await axiosSecure.get(`/reports/inventory-summary`
+    );
+    
+    return response.data;
+  },
+  staleTime: 1200000, 
+  cacheTime: 3600000, 
+});
+
+
+const { data : categoriesSales} = useQuery({
+  queryKey: ["categories-sales"],
+  queryFn: async () => {
+    const response = await axiosSecure.get(`/reports/categories-sales`
+    );
+    
+    return response.data;
+  },
+  staleTime: 1200000, 
+  cacheTime: 3600000, 
+});
+
+
+console.log(categoriesSales,"data");
+
+
+
+ 
   return (
     <div className="p-3 grid gap-6">
       {/* Yearly Stock vs Sales Report */}
@@ -110,15 +142,15 @@ export default function ReportAnalytics() {
 
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Stock & Seles</CardTitle>
+        <CardDescription>January - December</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="monthName"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -128,19 +160,36 @@ export default function ReportAnalytics() {
               cursor={false}
               content={<ChartTooltipContent indicator="dashed" />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+            <Bar dataKey="totalAddedStock" fill="var(--color-totalAddedStock)" radius={4} />
+            <Bar dataKey="totalSoldProduct" fill="var(--color-totalSoldProduct)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
+  {/* Conditional Message for Yearly Sales */}
+  {data?.totalSalesCount > 500 && (
+    <div className="flex gap-2 font-medium leading-none text-green-500">
+      <TrendingUp className="h-4 w-4" />
+      <span>Excellent sales performance this year! You&apos;ve exceeded your sales target.</span>
+    </div>
+  )}
+
+  {data?.totalSalesCount <= 250 && data?.totalSalesCount > 500 && (
+    <div className="flex gap-2 font-medium leading-none text-yellow-500">
+      <ShoppingCart className="h-4 w-4" />
+      <span>Good sales performance this year. Keep pushing to reach your sales goal.</span>
+    </div>
+  )}
+
+  {data?.totalSalesCount <= 100 && (
+    <div className="flex gap-2 font-medium leading-none text-red-500">
+      <Box className="h-4 w-4" />
+      <span>Sales are slower than expected. Consider reviewing your strategy for improvement.</span>
+    </div>
+  )}
+
+</CardFooter>
+
     </Card>
 
 
@@ -274,7 +323,7 @@ export default function ReportAnalytics() {
             <CardTitle>Total Sales</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">250</p>
+            <p className="text-2xl font-bold">{data?.totalSalesCount}</p>
           </CardContent>
         </Card>
         <Card>
@@ -282,7 +331,8 @@ export default function ReportAnalytics() {
             <CardTitle>Total Stock</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">500</p>
+            <p className="text-2xl font-bold">{data?.totalStockCount}</p>
+            <p className="text-xl font-bold">{data?.totalWeight} G</p>
           </CardContent>
         </Card>
         <Card>
@@ -290,7 +340,7 @@ export default function ReportAnalytics() {
             <CardTitle>Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">$12,000</p>
+            <p className="text-2xl font-bold"><span className="font-extrabold">৳ </span>{data?.totalRevenue}</p>
           </CardContent>
         </Card>
       </div>

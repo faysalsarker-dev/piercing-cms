@@ -65,6 +65,7 @@ export default function TopBar() {
             {data.length > 0 ? (
               data.map((item, index) => (
                 <DropdownMenuItem key={index} className="flex justify-between">
+                  <span>{index+1}</span>
                   <span>{item.clientName}</span>
                   <span className="text-sm text-gray-500">{item.clientPhone}</span>
                 </DropdownMenuItem>
