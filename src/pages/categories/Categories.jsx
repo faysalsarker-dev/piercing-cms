@@ -28,7 +28,7 @@ const axiosSecure = useAxios()
 const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await axiosSecure.get("/categories");
+      const response = await axiosSecure.get("/categories?status=all");
       return response.data || [];
     },
   });
@@ -161,7 +161,7 @@ const { data = [], isLoading, isError, refetch } = useQuery({
 
 
 
-              <Button className="mt-4 w-full bg-primary" type="submit" disabled={isPending}>
+              <Button className="mt-4 w-full bg-primary" type="submit" disabled={isPending || onUpdatepending}>
                 {isPending ? "Processing..." : editingCategory ? "Update" : "Add"}
               </Button>
             </form>
@@ -213,7 +213,16 @@ const { data = [], isLoading, isError, refetch } = useQuery({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((category,idx) => (
+            {
+            data?.length <= 0 ? (
+              <TableRow className='mt-10'>
+                <TableCell colSpan={4} className="text-center ">
+                  No categories available.
+                </TableCell>
+              </TableRow>
+            ) : (
+            
+            data?.map((category,idx) => (
               <TableRow key={category?._id}>
 
                 <TableCell>{idx+1}</TableCell>
@@ -238,7 +247,7 @@ const { data = [], isLoading, isError, refetch } = useQuery({
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
+            )))}
           </TableBody>
         </Table>
       )}

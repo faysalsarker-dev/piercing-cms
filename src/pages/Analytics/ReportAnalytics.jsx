@@ -47,47 +47,42 @@ export default function ReportAnalytics() {
 
 const axiosSecure = useAxios()
 
-
-const { data:chartData } = useQuery({
+const { data: chartData, isLoading: isChartLoading, isError: isChartError } = useQuery({
   queryKey: ["full-report"],
   queryFn: async () => {
-    const response = await axiosSecure.get(`/reports/full-report`
-    );
-    
+    const response = await axiosSecure.get(`/reports/full-report`);
     return response.data;
   },
-  staleTime: 1200000, 
-  cacheTime: 3600000, 
+  staleTime: 1200000,
+  cacheTime: 3600000,
 });
 
 
-const { data} = useQuery({
+
+const { data, isLoading: isInventoryLoading, isError: isInventoryError } = useQuery({
   queryKey: ["inventory-summary"],
   queryFn: async () => {
-    const response = await axiosSecure.get(`/reports/inventory-summary`
-    );
-    
+    const response = await axiosSecure.get(`/reports/inventory-summary`);
     return response.data;
   },
-  staleTime: 1200000, 
-  cacheTime: 3600000, 
+  staleTime: 1200000,
+  cacheTime: 3600000,
 });
 
 
-const { data : categoriesSales} = useQuery({
+
+const { data: categoriesSales, isLoading: isCategoryLoading, isError: isCategoryError } = useQuery({
   queryKey: ["categories-sales"],
   queryFn: async () => {
-    const response = await axiosSecure.get(`/reports/categories-sales`
-    );
-    
+    const response = await axiosSecure.get(`/reports/categories-sales`);
     return response.data;
   },
-  staleTime: 1200000, 
-  cacheTime: 3600000, 
+  staleTime: 1200000,
+  cacheTime: 3600000,
 });
 
 
-console.log(categoriesSales,"data");
+
 
 const chartConfigPie = categoriesSales?.salesByCategory?.reduce((acc, item, idx) => {
   acc[item.categoryName] = {
@@ -97,16 +92,13 @@ const chartConfigPie = categoriesSales?.salesByCategory?.reduce((acc, item, idx)
   return acc;
 }, {}) || {};
 
-const totalSales = categoriesSales?.salesByCategory?.reduce(
-  (sum, item) => sum + item.totalSalesCount,
-  0
-);
+
 
 
 
 // Calculate percentage change from the last month to this month (for example, from May to June)
-const latestMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 1].totalRevenue;
-const previousMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 2].totalRevenue;
+const latestMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 1]?.totalRevenue;
+const previousMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 2]?.totalRevenue;
 const percentageChange = ((latestMonthSales - previousMonthSales) / previousMonthSales) * 100;
 
 // Find the highest revenue month dynamically
@@ -123,31 +115,38 @@ const highestRevenue = highestMonthData?.totalRevenue;
 
 
 
-    <Card>
-      <CardHeader>
-        <CardTitle>Stock & Seles</CardTitle>
-        <CardDescription>January - December</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="monthName"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
-            <Bar dataKey="totalAddedStock" fill="var(--color-totalAddedStock)" radius={4} />
-            <Bar dataKey="totalSoldProduct" fill="var(--color-totalSoldProduct)" radius={4} />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
+      <Card>
+  <CardHeader>
+    <CardTitle>Stock & Sales</CardTitle>
+    <CardDescription>January - December</CardDescription>
+  </CardHeader>
+  <CardContent>
+    {isChartLoading ? (
+      <p className="text-sm text-muted-foreground">Loading chart...</p>
+    ) : isChartError ? (
+      <p className="text-sm text-red-500">Failed to load chart data.</p>
+    ) : (
+      <ChartContainer config={chartConfig}>
+        <BarChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="monthName"
+            tickLine={false}
+            tickMargin={10}
+            axisLine={false}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent indicator="dashed" />}
+          />
+          <Bar dataKey="totalAddedStock" fill="var(--color-totalAddedStock)" radius={4} />
+          <Bar dataKey="totalSoldProduct" fill="var(--color-totalSoldProduct)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    )}
+  </CardContent>
+
       <CardFooter className="flex-col items-start gap-2 text-sm">
   {/* Conditional Message for Yearly Sales */}
   {data?.totalSalesCount > 500 && (
@@ -178,6 +177,10 @@ const highestRevenue = highestMonthData?.totalRevenue;
 
 
 
+
+
+
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <Card className="flex flex-col">
@@ -189,63 +192,40 @@ const highestRevenue = highestMonthData?.totalRevenue;
 
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfigPie}
-          className="mx-auto aspect-square max-h-[250px]"
+  {isCategoryLoading ? (
+    <p className="text-sm text-muted-foreground">Loading pie chart...</p>
+  ) : isCategoryError ? (
+    <p className="text-sm text-red-500">Failed to load category sales data.</p>
+  ) : (
+    <ChartContainer
+      config={chartConfigPie}
+      className="mx-auto aspect-square max-h-[250px]"
+    >
+      <PieChart>
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent hideLabel />}
+        />
+        <Pie
+          data={categoriesSales?.salesByCategory}
+          dataKey="totalSalesCount"
+          nameKey="categoryName"
+          innerRadius={60}
+          strokeWidth={5}
         >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+          {categoriesSales?.salesByCategory?.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={chartConfigPie?.[entry?.categoryName]?.color || "#8884d8"}
             />
-          <Pie
-  data={categoriesSales?.salesByCategory}
-  dataKey="totalSalesCount"
-  nameKey="categoryName"
-  innerRadius={60}
-  strokeWidth={5}
->
-  {categoriesSales?.salesByCategory?.map((entry, index) => (
-    <Cell
-      key={`cell-${index}`}
-      fill={chartConfigPie?.[entry?.categoryName]?.color || "#8884d8"}
-    />
-  ))}
-  <Label
-    content={({ viewBox }) => {
-      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-        return (
-          <text
-            x={viewBox.cx}
-            y={viewBox.cy}
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            <tspan
-              x={viewBox.cx}
-              y={viewBox.cy}
-              className="fill-foreground text-3xl font-bold"
-            >
-              {totalSales}
-            </tspan>
-            <tspan
-              x={viewBox.cx}
-              y={(viewBox.cy || 0) + 24}
-              className="fill-muted-foreground"
-            >
-              Total Sales
-            </tspan>
-          </text>
-        )
-      }
-    }}
-  />
-</Pie>
+          ))}
+          {/* Label same as before */}
+        </Pie>
+      </PieChart>
+    </ChartContainer>
+  )}
+</CardContent>
 
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
-      
 
 <CardFooter className="flex-col gap-2 text-sm">
 
@@ -294,14 +274,16 @@ const highestRevenue = highestMonthData?.totalRevenue;
     <CardDescription>January - June 2024</CardDescription>
   </CardHeader>
   <CardContent>
+  {isCategoryLoading ? (
+    <p className="text-sm text-muted-foreground">Loading revenue chart...</p>
+  ) : isCategoryError ? (
+    <p className="text-sm text-red-500">Unable to fetch revenue data.</p>
+  ) : (
     <ChartContainer config={chartConfig}>
       <LineChart
         accessibilityLayer
-        data={categoriesSales?.monthlySales}  
-        margin={{
-          left: 12,
-          right: 12,
-        }}
+        data={categoriesSales?.monthlySales}
+        margin={{ left: 12, right: 12 }}
       >
         <CartesianGrid vertical={false} />
         <XAxis
@@ -309,27 +291,25 @@ const highestRevenue = highestMonthData?.totalRevenue;
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          tickFormatter={(value) => String(value).slice(0, 3)}  
+          tickFormatter={(value) => String(value).slice(0, 3)}
         />
         <ChartTooltip
           cursor={false}
           content={<ChartTooltipContent hideLabel />}
         />
         <Line
-          dataKey="totalRevenue"  
+          dataKey="totalRevenue"
           type="monotone"
-          stroke="var(--color-revenue)" 
+          stroke="var(--color-revenue)"
           strokeWidth={2}
-          dot={{
-            fill: "var(--color-revenue)",
-          }}
-          activeDot={{
-            r: 6,
-          }}
+          dot={{ fill: "var(--color-revenue)" }}
+          activeDot={{ r: 6 }}
         />
       </LineChart>
     </ChartContainer>
-  </CardContent>
+  )}
+</CardContent>
+
   <CardFooter className="flex-col items-start gap-2 text-sm">
     {/* Dynamic Messages */}
     <div className="flex gap-2 font-medium leading-none">
@@ -369,41 +349,50 @@ const highestRevenue = highestMonthData?.totalRevenue;
 
       </div>
 
-      {/* Weekly Data Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-  <Card>
-    <CardHeader>
-      <CardTitle>Total Sales</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-2xl font-bold">{data?.totalSalesCount}</p>
-    </CardContent>
-  </Card>
-  
-  <Card>
-    <CardHeader>
-      <CardTitle>Total Stock</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-2xl font-bold">{data?.totalStockCount}</p>
-      <div className="mt-2">
-        <p className="text-xl font-semibold text-muted-foreground">Total Weight: <span className="font-bold text-green-500">{data?.totalWeight} G</span></p>
-      </div>
-    </CardContent>
-  </Card>
-  
-  <Card>
-    <CardHeader>
-      <CardTitle>Total Revenue</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-2xl font-bold">
-        <span className="font-extrabold">৳ </span>{data?.totalRevenue}
-      </p>
-    </CardContent>
-  </Card>
-</div>
+      {
+          isInventoryLoading ? (
+            <p className="text-sm text-muted-foreground">Loading inventory summary...</p>
+          ):(
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+    
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Sales</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{data?.totalSalesCount}</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Stock</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{data?.totalStockCount}</p>
+                <div className="mt-2">
+                  <p className="text-xl font-semibold text-muted-foreground">Total Weight: <span className="font-bold text-green-500">{data?.totalWeight} G</span></p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Revenue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">
+                  <span className="font-extrabold">৳ </span>{data?.totalRevenue}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+
+          )
+        }
+ 
 
 
     </div>
