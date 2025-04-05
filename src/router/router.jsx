@@ -10,12 +10,15 @@ import AddNewSale from "@/pages/salesManagement/AddNewSale";
 import SalesDetails from "@/pages/SinglePage/SalesDetails";
 import ProductDetails from "@/pages/SinglePage/ProductDetails";
 import Login from "@/pages/Auth/Login";
+import Protector from "./Protector";
+import UpdateSale from "@/pages/SinglePage/UpdateSale";
+import UpdateStock from "@/pages/SinglePage/UpdateStock";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element:<Layout/> ,
+    element:<Protector><Layout/></Protector> ,
     errorElement: <h3>error page</h3>,
     children: [
         {
@@ -39,7 +42,7 @@ const router = createBrowserRouter([
           element:<SalesManagement/>
       },
         {
-          path:'/add-sales',
+          path:'/sale-management/add-sales',
           element:<AddNewSale/>
       },
         {
@@ -53,6 +56,14 @@ const router = createBrowserRouter([
         {
           path:'/product/:id',
           element:<ProductDetails/>
+      },
+        {
+          path:'/sale-management/:id',
+          element:<UpdateSale/>
+      },
+        {
+          path:'/stock-management/:id',
+          element:<UpdateStock/>
       },
     
     ],

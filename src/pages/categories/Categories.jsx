@@ -169,6 +169,11 @@ const { data = [], isLoading, isError, refetch } = useQuery({
         </Dialog>
       </div>
 
+
+
+
+
+
       {isLoading ? (
         <Table className="w-full text-lg">
   <TableHeader>
@@ -202,55 +207,71 @@ const { data = [], isLoading, isError, refetch } = useQuery({
   </TableBody>
 </Table>
 
-      ) : (
-        <Table className="w-full text-lg">
-          <TableHeader>
-            <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {
-            data?.length <= 0 ? (
-              <TableRow className='mt-10'>
-                <TableCell colSpan={4} className="text-center ">
-                  No categories available.
-                </TableCell>
-              </TableRow>
-            ) : (
-            
-            data?.map((category,idx) => (
-              <TableRow key={category?._id}>
-
-                <TableCell>{idx+1}</TableCell>
-                <TableCell>{category?.name}</TableCell>
-                <TableCell>
-                  
-                  
-                <Badge
+      ) :
+      
+   (
+    data?.length <= 0 ? (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">No categories available.</p>
+      </div>
+    ) : (
+  
+      <Table className="w-full text-lg">
+      <TableHeader>
+        <TableRow>
+          <TableHead>#</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {
+        data?.length <= 0 ? (
+          <TableRow className='mt-10'>
+            <TableCell colSpan={4} className="text-center ">
+              No categories available.
+            </TableCell>
+          </TableRow>
+        ) : (
+        
+        data?.map((category,idx) => (
+          <TableRow key={category?._id}>
+  
+            <TableCell>{idx+1}</TableCell>
+            <TableCell>{category?.name}</TableCell>
+            <TableCell>
+              
+              
+            <Badge
   variant="outline"
   className={category?.status.toLowerCase() === "active" ? "text-green-600" : "text-red-600"}
->
+  >
   {category?.status}
-</Badge>
-
-                </TableCell>
-                <TableCell className="flex gap-4">
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
-                    <Pencil className="w-5 h-5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(category)}>
-                    <Trash2 className="w-5 h-5 text-red-500" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            )))}
-          </TableBody>
-        </Table>
-      )}
+  </Badge>
+  
+            </TableCell>
+            <TableCell className="flex gap-4">
+              <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
+                <Pencil className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => handleDelete(category)}>
+                <Trash2 className="w-5 h-5 text-red-500" />
+              </Button>
+            </TableCell>
+          </TableRow>
+        )))}
+      </TableBody>
+    </Table>
+  
+    )
+   )
+      
+      
+      
+      
+      
+      }
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

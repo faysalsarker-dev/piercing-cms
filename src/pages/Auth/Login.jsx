@@ -3,29 +3,39 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useAuth from '@/hooks/useAuth/useAuth';
-import  { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import  { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-const {signIn,loading} = useAuth()
+  const navigate = useNavigate()
+
+const {signIn,loading,user} = useAuth()
   const onSubmit = async (data) => {
 try {
     await signIn(data.email, data.password,rememberMe)
     toast.success('Login successful!')
-   
-} catch (error) {
+   navigate('/')
+} catch  {
     toast.error('Login failed! Please check your credentials.')
 }
     
 
    
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate(location.state?.from || "/");
+    }
+  }, [user, location.state, navigate]);
+
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -62,7 +72,7 @@ try {
               onClick={togglePasswordVisibility}
               className="absolute right-2 top-2 text-gray-500"
             >
-              {passwordVisible ? 'Hide' : 'Show'}
+              {passwordVisible ?  <Eye />:<EyeOff /> }
             </button>
             {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
@@ -86,12 +96,8 @@ try {
             {loading ?'Login.....':'Login'}
           </Button>
 
-          {/* Forgot Password Link */}
-          <div className="mt-4 text-center">
-            <Link to="/forgot-password" className="text-sm text-blue-500 hover:text-blue-700">
-              Forgot Password?
-            </Link>
-          </div>
+     
+        
         </form>
       </div>
     </div>

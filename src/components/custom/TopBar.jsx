@@ -12,11 +12,14 @@ import {
 import { cn } from "@/lib/utils";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
+import useAuth from "@/hooks/useAuth/useAuth";
+import Swal from "sweetalert2";
 
 export default function TopBar() {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
+  const {logOut}=useAuth()
 
   const [dueDate] = useState(new Date().toISOString().split("T")[0]);
 
@@ -40,6 +43,26 @@ export default function TopBar() {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
+
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out and redirected to the login page.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, log out",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logOut()
+      }
+    });
+  };
+
+
   return (
     <div className={cn("bg-sidebar p-4 shadow-lg flex items-center justify-between rounded-lg")}>
       {/* Sidebar Toggle Button */}
@@ -47,9 +70,9 @@ export default function TopBar() {
 
       {/* User Info */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)}>
+        {/* <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
-        </Button>
+        </Button> */}
 
         {/* Notification Dropdown */}
         <DropdownMenu>
@@ -80,14 +103,14 @@ export default function TopBar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar>
-              <AvatarImage src="/path-to-avatar.jpg" alt="User Avatar" />
+              <AvatarImage src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?ga=GA1.1.1945158823.1729787142&semt=ais_hybrid&w=740" alt="User Avatar" />
               <AvatarFallback>FS</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+           
+            
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

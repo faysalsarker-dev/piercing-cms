@@ -124,6 +124,13 @@ const ManageStock = () => {
     </TableBody>
   </Table> 
   ):(
+
+
+  data?.stocks?.length === 0 ? (
+    <div className="flex items-center justify-center h-64">
+      <p className="text-gray-500">No stocks available.</p>
+    </div>
+  ):(
     <Table className="min-w-full text-sm">
     <TableHeader>
       <TableRow className="bg-gray-100">
@@ -150,12 +157,20 @@ const ManageStock = () => {
           <TableCell className="p-3">{item?.bhori || ''} B / {item?.tola || 0} T / {item?.roti || 0} R</TableCell>
           <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
           <TableCell className="p-3 flex space-x-2 items-center">
+
+             <Link to={`/product/${item?._id}`}> 
             <Button variant="outline" size="icon" className="p-1">
-             <Link to={`/product/${item?._id}`}> <Eye size={16} /></Link>
-            </Button>
-            <Button variant="outline" size="icon" className="p-1">
-              <Edit size={16} />
-            </Button>
+            <Eye size={16} />
+            </Button></Link>
+
+
+
+
+        <Link to={`/stock-management/${item?._id}`}>
+              <Button variant="outline" size="icon" className="p-1">
+                <Edit size={16} />
+              </Button>
+        </Link>
             <Button
   variant="outline"
   size="icon"
@@ -176,6 +191,16 @@ const ManageStock = () => {
       ))}
     </TableBody>
   </Table>
+  
+  )
+
+
+
+
+
+
+
+ 
 
   )
 }
@@ -205,7 +230,7 @@ const ManageStock = () => {
 
       </Card>
 
-      <Pagination className={'mt-5'}>
+ { data?.stocks?.length !== 0 &&   ( <Pagination className={'mt-5'}>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} />
@@ -221,7 +246,7 @@ const ManageStock = () => {
             <PaginationNext onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page === totalPages} />
           </PaginationItem>
         </PaginationContent>
-      </Pagination>
+      </Pagination>)}
     </div>
   );
 };

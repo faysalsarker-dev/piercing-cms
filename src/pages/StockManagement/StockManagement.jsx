@@ -8,7 +8,7 @@ export default function StockManagement() {
  <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Stock Management</h2>
-        <Link to='/stock-management/add-product'><Button className='bg-primary'>Add New Sale</Button></Link>
+        <Link to='/stock-management/add-product'><Button className='bg-primary'>Add New Product</Button></Link>
       </div>
 
 <ManageStock />

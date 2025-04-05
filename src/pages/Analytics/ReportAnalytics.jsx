@@ -59,7 +59,7 @@ const { data: chartData, isLoading: isChartLoading, isError: isChartError } = us
 
 
 
-const { data, isLoading: isInventoryLoading, isError: isInventoryError } = useQuery({
+const { data, isLoading: isInventoryLoading} = useQuery({
   queryKey: ["inventory-summary"],
   queryFn: async () => {
     const response = await axiosSecure.get(`/reports/inventory-summary`);
@@ -106,7 +106,10 @@ const highestMonthData = categoriesSales?.monthlySales?.reduce((prev, current) =
 const highestMonth = highestMonthData?.month;
 const highestRevenue = highestMonthData?.totalRevenue;
 
-
+const totalSales = categoriesSales?.salesByCategory?.reduce(
+  (sum, item) => sum + item.totalSalesCount,
+  0
+);
   return (
     <div className="p-3 grid gap-6">
       {/* Yearly Stock vs Sales Report */}
@@ -219,7 +222,46 @@ const highestRevenue = highestMonthData?.totalRevenue;
               fill={chartConfigPie?.[entry?.categoryName]?.color || "#8884d8"}
             />
           ))}
-          {/* Label same as before */}
+         
+         
+  {categoriesSales?.salesByCategory?.map((entry, index) => (
+    <Cell
+      key={index}
+      fill={chartConfigPie?.[entry?.categoryName]?.color || "#8884d8"}
+    />
+  ))}
+  <Label
+    content={({ viewBox }) => {
+      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+        return (
+          <text
+            x={viewBox.cx}
+            y={viewBox.cy}
+            textAnchor="middle"
+            dominantBaseline="middle"
+          >
+            <tspan
+              x={viewBox.cx}
+              y={viewBox.cy}
+              className="fill-foreground text-3xl font-bold"
+            >
+              {totalSales}
+            </tspan>
+            <tspan
+              x={viewBox.cx}
+              y={(viewBox.cy || 0) + 24}
+              className="fill-muted-foreground"
+            >
+              Total Sales
+            </tspan>
+          </text>
+        )
+      }
+    }}
+
+
+/>
+
         </Pie>
       </PieChart>
     </ChartContainer>
@@ -271,7 +313,7 @@ const highestRevenue = highestMonthData?.totalRevenue;
         <Card>
   <CardHeader>
     <CardTitle>Monthly Sales Revenue</CardTitle>
-    <CardDescription>January - June 2024</CardDescription>
+    <CardDescription>Your Total Sales Renenue</CardDescription>
   </CardHeader>
   <CardContent>
   {isCategoryLoading ? (
