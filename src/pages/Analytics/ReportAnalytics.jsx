@@ -2,27 +2,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import { Box, ShoppingCart, TrendingUp } from "lucide-react";
-import { useMemo } from "react";
-import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Label } from "recharts";
+import { Box, ShoppingCart, TrendingDown, TrendingUp } from "lucide-react";
+import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis,  CartesianGrid, Label, Cell } from "recharts";
 
 
 
-  // const chartData = [
-  //   { monthName: "January", desktop: 186, mobile: 80 },
-  //   { month: "February", desktop: 305, mobile: 200 },
-  //   { month: "March", desktop: 237, mobile: 120 },
-  //   { month: "April", desktop: 73, mobile: 190 },
-  //   { month: "May", desktop: 209, mobile: 130 },
-  //   { month: "June", desktop: 214, mobile: 140 },
-  //   { month: "January", desktop: 186, mobile: 80 },
-  //   { month: "February", desktop: 305, mobile: 200 },
-  //   { month: "March", desktop: 237, mobile: 120 },
-  //   { month: "April", desktop: 73, mobile: 190 },
-  //   { month: "May", desktop: 209, mobile: 130 },
-  //   { month: "June", desktop: 214, mobile: 140 },
-  // ]
-  
+
 
 
 
@@ -42,42 +27,17 @@ const chartConfig = {
 
 
 
-  const chartDataPie = [
-    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-    { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-    { browser: "other", visitors: 190, fill: "var(--color-other)" },
-  ]
-  const chartConfigPie = {
-    visitors: {
-      label: "Visitors",
-    },
-    chrome: {
-      label: "Chrome",
-      color: "hsl(var(--chart-1))",
-    },
-    safari: {
-      label: "Safari",
-      color: "hsl(var(--chart-2))",
-    },
-    firefox: {
-      label: "Firefox",
-      color: "hsl(var(--chart-3))",
-    },
-    edge: {
-      label: "Edge",
-      color: "hsl(var(--chart-4))",
-    },
-    other: {
-      label: "Other",
-      color: "hsl(var(--chart-5))",
-    },
-  } 
 
 
 
-
+  const categoryColors = [
+    "hsl(var(--chart-1))",
+    "hsl(var(--chart-2))",
+    "hsl(var(--chart-3))",
+    "hsl(var(--chart-4))",
+    "hsl(var(--chart-5))",
+  
+  ];
 
 
 
@@ -129,9 +89,32 @@ const { data : categoriesSales} = useQuery({
 
 console.log(categoriesSales,"data");
 
+const chartConfigPie = categoriesSales?.salesByCategory?.reduce((acc, item, idx) => {
+  acc[item.categoryName] = {
+    label: item.categoryName,
+    color: categoryColors[idx % categoryColors.length], // cycle through colors
+  };
+  return acc;
+}, {}) || {};
+
+const totalSales = categoriesSales?.salesByCategory?.reduce(
+  (sum, item) => sum + item.totalSalesCount,
+  0
+);
 
 
- 
+
+// Calculate percentage change from the last month to this month (for example, from May to June)
+const latestMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 1].totalRevenue;
+const previousMonthSales = categoriesSales?.monthlySales[categoriesSales?.monthlySales?.length - 2].totalRevenue;
+const percentageChange = ((latestMonthSales - previousMonthSales) / previousMonthSales) * 100;
+
+// Find the highest revenue month dynamically
+const highestMonthData = categoriesSales?.monthlySales?.reduce((prev, current) => (prev.totalRevenue > current.totalRevenue ? prev : current), {});
+const highestMonth = highestMonthData?.month;
+const highestRevenue = highestMonthData?.totalRevenue;
+
+
   return (
     <div className="p-3 grid gap-6">
       {/* Yearly Stock vs Sales Report */}
@@ -196,11 +179,14 @@ console.log(categoriesSales,"data");
 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Total Sales Count */}
+        
         <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+      <CardHeader className="items-center pb-0">
+  <CardTitle>Category-wise Sales Overview</CardTitle>
+  <CardDescription>Analyze which product categories</CardDescription>
+</CardHeader>
+
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -212,138 +198,212 @@ console.log(categoriesSales,"data");
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Pie
-              data={chartDataPie}
-              dataKey="visitors"
-              nameKey="browser"
-              innerRadius={60}
-              strokeWidth={5}
+          <Pie
+  data={categoriesSales?.salesByCategory}
+  dataKey="totalSalesCount"
+  nameKey="categoryName"
+  innerRadius={60}
+  strokeWidth={5}
+>
+  {categoriesSales?.salesByCategory?.map((entry, index) => (
+    <Cell
+      key={`cell-${index}`}
+      fill={chartConfigPie?.[entry?.categoryName]?.color || "#8884d8"}
+    />
+  ))}
+  <Label
+    content={({ viewBox }) => {
+      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+        return (
+          <text
+            x={viewBox.cx}
+            y={viewBox.cy}
+            textAnchor="middle"
+            dominantBaseline="middle"
+          >
+            <tspan
+              x={viewBox.cx}
+              y={viewBox.cy}
+              className="fill-foreground text-3xl font-bold"
             >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {/* {totalVisitors.toLocaleString()} */}1234K
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Total Sales
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
-              />
-            </Pie>
+              {totalSales}
+            </tspan>
+            <tspan
+              x={viewBox.cx}
+              y={(viewBox.cy || 0) + 24}
+              className="fill-muted-foreground"
+            >
+              Total Sales
+            </tspan>
+          </text>
+        )
+      }
+    }}
+  />
+</Pie>
+
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+      
+
+<CardFooter className="flex-col gap-2 text-sm">
+
+
+  {/* Most & Least Sold Categories */}
+  {categoriesSales?.salesByCategory?.length > 0 && (() => {
+    const sorted = [...categoriesSales.salesByCategory].sort(
+      (a, b) => b.totalSalesCount - a.totalSalesCount
+    );
+    const most = sorted[0];
+    const least = sorted[sorted.length - 1];
+
+    return (
+      <>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <TrendingUp className="h-4 w-4 text-green-500" />
+          Most sold category:{" "}
+          <span className="font-semibold text-foreground">
+            {most.categoryName} ({most.totalSalesCount} sales)
+          </span>
         </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <TrendingDown className="h-4 w-4 text-red-500" />
+          Least sold category:{" "}
+          <span className="font-semibold text-foreground">
+            {least.categoryName} ({least.totalSalesCount} sales)
+          </span>
         </div>
-      </CardFooter>
+      </>
+    );
+  })()}
+</CardFooter>
+
     </Card>
 
+
+
+
+
         {/* Total Earned Revenue */}
+ 
         <Card>
-      <CardHeader>
-        <CardTitle>Line Chart - Dots</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Line
-              dataKey="desktop"
-              type="natural"
-              stroke="var(--color-desktop)"
-              strokeWidth={2}
-              dot={{
-                fill: "var(--color-desktop)",
-              }}
-              activeDot={{
-                r: 6,
-              }}
-            />
-          </LineChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
+  <CardHeader>
+    <CardTitle>Monthly Sales Revenue</CardTitle>
+    <CardDescription>January - June 2024</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <ChartContainer config={chartConfig}>
+      <LineChart
+        accessibilityLayer
+        data={categoriesSales?.monthlySales}  
+        margin={{
+          left: 12,
+          right: 12,
+        }}
+      >
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+          tickFormatter={(value) => String(value).slice(0, 3)}  
+        />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent hideLabel />}
+        />
+        <Line
+          dataKey="totalRevenue"  
+          type="monotone"
+          stroke="var(--color-revenue)" 
+          strokeWidth={2}
+          dot={{
+            fill: "var(--color-revenue)",
+          }}
+          activeDot={{
+            r: 6,
+          }}
+        />
+      </LineChart>
+    </ChartContainer>
+  </CardContent>
+  <CardFooter className="flex-col items-start gap-2 text-sm">
+    {/* Dynamic Messages */}
+    <div className="flex gap-2 font-medium leading-none">
+      {/* Calculate the percentage change dynamically */}
+      {percentageChange > 0 ? (
+        <>
+          Trending up by {percentageChange.toFixed()}% this month <TrendingUp className="h-4 w-4" />
+        </>
+      ) : (
+        <>
+          Trending down by {Math.abs(percentageChange).toFixed()}% this month <TrendingDown className="h-4 w-4" />
+        </>
+      )}
+    </div>
+
+    {/* Dynamic message for highest revenue */}
+    {highestMonth && highestRevenue && (
+      <div className="flex gap-2 font-medium leading-none">
+        Highest revenue in {highestMonth}: {highestRevenue} 
+      </div>
+    )}
+
+    {/* Sales Description */}
+    <div className="leading-none text-muted-foreground">
+      Showing total revenue 
+    </div>
+  </CardFooter>
+</Card>
+
+
+
+
+
+
+
+
+
       </div>
 
       {/* Weekly Data Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data?.totalSalesCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Stock</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data?.totalStockCount}</p>
-            <p className="text-xl font-bold">{data?.totalWeight} G</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold"><span className="font-extrabold">৳ </span>{data?.totalRevenue}</p>
-          </CardContent>
-        </Card>
+  <Card>
+    <CardHeader>
+      <CardTitle>Total Sales</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-2xl font-bold">{data?.totalSalesCount}</p>
+    </CardContent>
+  </Card>
+  
+  <Card>
+    <CardHeader>
+      <CardTitle>Total Stock</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-2xl font-bold">{data?.totalStockCount}</p>
+      <div className="mt-2">
+        <p className="text-xl font-semibold text-muted-foreground">Total Weight: <span className="font-bold text-green-500">{data?.totalWeight} G</span></p>
       </div>
+    </CardContent>
+  </Card>
+  
+  <Card>
+    <CardHeader>
+      <CardTitle>Total Revenue</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-2xl font-bold">
+        <span className="font-extrabold">৳ </span>{data?.totalRevenue}
+      </p>
+    </CardContent>
+  </Card>
+</div>
+
 
 
     </div>
