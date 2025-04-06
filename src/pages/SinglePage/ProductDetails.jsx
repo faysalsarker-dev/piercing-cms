@@ -1,19 +1,19 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Trash, Pencil } from "lucide-react";
-import { format } from "date-fns"; // Import date-fns to format dates
+import { format } from "date-fns";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 import { useState } from "react";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const axiosSecure = useAxios();
-const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  // Fetch product data from the API
+
   const {
     data: product,
     isLoading,
@@ -29,7 +29,6 @@ const [open, setOpen] = useState(false);
     cacheTime: 3600000,
   });
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -38,90 +37,102 @@ const [open, setOpen] = useState(false);
     );
   }
 
-  // Error state
   if (isError) {
     return (
-      <div className="text-red-500 text-center mt-10">Failed to load product details.</div>
+      <div className="text-red-500 text-center mt-10">
+        Failed to load product details.
+      </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      {/* Product Title and Header */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">{product?.productName}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-lg text-gray-500">Category: <strong>{product?.category}</strong></p>
-        </CardContent>
-      </Card>
-
-      {/* Product Image */}
-      {product?.image && (
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold mb-2">Product Image</h3>
-          <img src={product?.image} alt={product?.productName} className="w-full h-auto rounded-md shadow-lg" />
+   <div className="p-3">
+      <div className="max-w-5xl mx-auto p-6 sm:p-10 bg-white rounded-2xl shadow-lg">
+        {/* Product Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <div>
+            <h1 className="md:text-3xl font-bold text-gray-800 mb-1">
+            Product Name: {product?.productName}
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Category: <span className="font-medium">{product?.category}</span>
+            </p>
+          </div>
+          <div className="flex gap-3 mt-4 sm:mt-0">
+     <Link to={`/stock-management/${id}`}>
+              <Button variant="outline" className="flex items-center gap-2 text-blue-600">
+                <Pencil size={16} /> Edit
+              </Button>
+     </Link>
+            <Button
+              onClick={() => {
+                setDeleteId(product._id);
+                setOpen(true);
+              }}
+              variant="destructive"
+              className="flex items-center gap-2"
+            >
+              <Trash size={16} /> Delete
+            </Button>
+          </div>
         </div>
-      )}
-
-      {/* Product Info Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Product Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <p><strong>Barcode:</strong> {product?.barcode}</p>
-            <p><strong>Weight:</strong> {product?.weight}g</p>
-            <p><strong>Karat:</strong> {product?.karat}</p>
-            <p><strong>Cost:</strong> ${product?.cost}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Additional Info */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Additional Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <p><strong>Bhori:</strong> {product?.bhori || "N/A"}</p>
-            <p><strong>Tola:</strong> {product?.tola || "N/A"}</p>
-            <p><strong>Roti:</strong> {product?.roti || "N/A"}</p>
-            <p><strong>Added At:</strong> {format(new Date(product?.createdAt), "EEEE, MMMM d, yyyy")}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      
-
-      <DeleteConfirmDialog
-  open={open}
-  onClose={() => setOpen(false)}
-  id={deleteId}
-  url={`/stocks`} 
-  navigateLink={-1}
-/>
-
-
-
-
-      <div className="flex justify-between mt-6">
-        <Button variant="outline" className="flex items-center text-blue-600">
-          <Pencil className="w-4 h-4 mr-2" /> Edit
-        </Button>
-        <Button 
-          onClick={() => {
-            setDeleteId(product._id); // this is the ID of the stock item
-            setOpen(true);          // open the dialog
-          }}
-        variant="destructive" className="flex items-center text-white">
-          <Trash className="w-4 h-4 mr-2" /> Delete
-        </Button>
+  
+        {/* Product Image */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-2 text-gray-700">Product Image</h2>
+          {product?.image ? (
+            <img
+              src={`${import.meta.env.VITE_BASE_URL}/images/${product.image}`}
+              alt={product?.productName}
+              className="w-full max-h-[400px] object-contain rounded-xl border"
+            />
+          ) : (
+            <div className="w-full h-64 flex items-center justify-center bg-gray-100 border rounded-xl text-gray-400 italic">
+              No image available
+            </div>
+          )}
+        </div>
+  
+        {/* Product Details Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg text-gray-800">Product Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-gray-600">
+              <p><strong>Barcode:</strong> {product?.barcode}</p>
+              <p><strong>Weight:</strong> {product?.weight}g</p>
+              <p><strong>Karat:</strong> {product?.karat}</p>
+              <p><strong>Cost:</strong> ${product?.cost}</p>
+            </CardContent>
+          </Card>
+  
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg text-gray-800">Additional Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-gray-600">
+              <p><strong>Bhori:</strong> {product?.bhori || "N/A"}</p>
+              <p><strong>Tola:</strong> {product?.tola || "N/A"}</p>
+              <p><strong>Roti:</strong> {product?.roti || "N/A"}</p>
+              <p>
+                <strong>Added On:</strong>{" "}
+                {format(new Date(product?.createdAt), "EEEE, MMMM d, yyyy")}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+  
+        {/* Delete Dialog */}
+        <DeleteConfirmDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          id={deleteId}
+          url={`/stocks`}
+          navigateLink={-1}
+        />
       </div>
-    </div>
+   </div>
   );
 };
 

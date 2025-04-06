@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "react-hot-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
+import { Card } from "@/components/ui/card";
 
 export default function Categories() {
   const [isOpen, setIsOpen] = useState(false);
@@ -171,10 +172,11 @@ const { data = [], isLoading, isError, refetch } = useQuery({
 
 
 
-
-
-
-      {isLoading ? (
+<Card className="w-full shadow-lg mt-5">
+  <div className="overflow-x-auto">
+  
+    
+  {isLoading ? (
         <Table className="w-full text-lg">
   <TableHeader>
     <TableRow>
@@ -272,6 +274,14 @@ const { data = [], isLoading, isError, refetch } = useQuery({
       
       
       }
+  
+  
+  
+  </div>
+  
+</Card>
+
+   
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

@@ -56,7 +56,7 @@ const ManageStock = () => {
        
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
   {/* Left Side: Search Input */}
-  <div className="flex items-center w-full">
+  <div className="flex items-center w-full bg-sidebar">
     <Input
       placeholder="Search by product name or barcode..."
       onChange={(e) => handleSearch(e.target.value)}
@@ -65,7 +65,7 @@ const ManageStock = () => {
   </div>
 
   {/* Right Side: Category + Date Sort Select */}
-  <div className="flex items-center gap-4 w-full">
+  <div className="flex items-center gap-4 w-full bg-sidebar">
     <Select value={category} onValueChange={(value) => setCategory(value)}>
       <SelectTrigger className="w-full h-12 text-lg">
         <SelectValue placeholder="Select Category" />
@@ -185,7 +185,7 @@ const ManageStock = () => {
 
           </TableCell>
           <TableCell className="p-3">
-            {item.image ? <img src={item.image} alt={item.productName} width={30} height={30} className="rounded-md" /> : "No Image"}
+            {item.image ? <img src={`${import.meta.env.VITE_BASE_URL}/images/${item.image}`} alt={item.productName} width={30} height={30} className="rounded-md" /> : "No Image"}
           </TableCell>
         </TableRow>
       ))}
@@ -230,7 +230,7 @@ const ManageStock = () => {
 
       </Card>
 
- { data?.stocks?.length !== 0 &&   ( <Pagination className={'mt-5'}>
+ { data?.stocks?.length !== 0 ||   data?.stocks?.length < 9 && ( <Pagination className={'mt-5'}>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} />

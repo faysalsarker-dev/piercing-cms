@@ -1,4 +1,4 @@
-import { DollarSign, ShoppingCart, FileText, Home, Grid, LogOut } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, BarChart, LogOut } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -18,37 +18,37 @@ const items = [
   {
     title: "Dashboard",
     url: "/",
-    icon: Home, 
+    icon: LayoutDashboard,
   },
   {
     title: "Add Product",
     url: "/stock-management/add-product",
-    icon: Home, 
+    icon: PlusCircle,
   },
   {
     title: "Stock Management",
     url: "/stock-management",
-    icon: Grid, 
+    icon: Boxes,
   },
   {
     title: "Sales Management",
     url: "/sale-management",
-    icon: ShoppingCart, 
+    icon: ShoppingBag,
   },
   {
     title: "Sales Products",
     url: "/sale-management/add-sales",
-    icon: ShoppingCart, 
+    icon: ShoppingCart,
   },
   {
     title: "Categories",
     url: "/categories",
-    icon: FileText, 
+    icon: Tags,
   },
   {
     title: "Reports & Analytics",
     url: "/reports",
-    icon: DollarSign,
+    icon: BarChart,
   },
 ];
 
@@ -90,21 +90,27 @@ const {logOut} = useAuth()
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      className={`flex items-center gap-3 px-4 py-3 rounded-md transition-all ${
+                  size='lg'
+                      className={`
+                        
+           
+                                   ${
                         isActive
-                          ? "bg-primary text-white"
+                          ? "bg-orange-100 text-primary font-extrabold"
                           : "text-gray-700 hover:bg-gray-200"
-                      }`}
+                      }
+                      
+                      `}
                       asChild
                     >
 
-
                       
                       <Link to={item.url}>
-                        <item.icon className={`w-7 h-7`} />
-                        <span className="font-medium">{item.title}</span>
+                        <item.icon size={10}  color="currentColor" strokeWidth={isActive ? 3 : 2} />
+                        <span className={` ${isActive ? 'font-bold' : 'font-medium'}`}>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
+             
                   </SidebarMenuItem>
                 );
               })}
@@ -112,8 +118,9 @@ const {logOut} = useAuth()
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Logout Button */}
+  
         <div className="mt-auto px-4 py-3 border-t border-gray-300">
+          
           <SidebarMenuButton
             className="flex items-center gap-3 w-full text-gray-700 px-4 py-3 rounded-md hover:bg-red-500 hover:text-white transition-all"
             asChild
@@ -123,7 +130,25 @@ const {logOut} = useAuth()
               <span className="font-medium">Logout</span>
             </button>
           </SidebarMenuButton>
+          <div className='flex justify-start p-2 mt-4'>
+      <a 
+                href="https://faysal-sarker.netlify.app" 
+                target="_blank"
+                rel="noopener noreferrer" className="text-base"> 
+        Developed by  {''}
+            <span className="text-blue-500 font-bold">
+            
+                   Faysal Sarker
+             
+            </span>
+            
+          </a>
+      </div>
         </div>
+
+      
+
+      
       </SidebarContent>
     </Sidebar>
   );

@@ -33,6 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Card } from "@/components/ui/card";
 
 export default function SalesManagement() {
   const [search, setSearch] = useState("");
@@ -112,7 +113,7 @@ export default function SalesManagement() {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4 mb-4">
         {/* Search Bar takes half the width on larger screens, full width on smaller screens */}
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2  bg-sidebar">
           <Input
             className="h-12 w-full"
             placeholder="Search by phone or name"
@@ -121,7 +122,7 @@ export default function SalesManagement() {
         </div>
 
         {/* Other Selects take full width on small screens, and each takes 1/3 width on larger screens */}
-        <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4  bg-sidebar">
           <Select
             value={category}
             onValueChange={(value) => setCategory(value)}
@@ -171,94 +172,96 @@ export default function SalesManagement() {
           </Select>
         </div>
       </div>
-
-      <div className="overflow-x-auto mt-10">
-        {isLoading ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {[...Array(8)].map((_, index) => (
-                  <TableHead key={index}>
-                    <Skeleton className="h-6 w-full" />
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {[...Array(5)].map((_, index) => (
-                <TableRow key={index}>
-                  {[...Array(8)].map((_, cellIndex) => (
-                    <TableCell key={cellIndex}>
+<Card className="w-full shadow-lg mt-5 ">
+  
+        <div className="overflow-x-auto flex justify-center">
+          {isLoading ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {[...Array(8)].map((_, index) => (
+                    <TableHead key={index}>
                       <Skeleton className="h-6 w-full" />
-                    </TableCell>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : data?.sales?.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-gray-500">No stocks available.</p>
-          </div>
-        ) : (
-          <Table className="w-full text-lg">
-            <TableHeader className="bg-gray-100">
-              <TableRow>
-                <TableHead>Client Name</TableHead>
-                <TableHead>Client Phone</TableHead>
-                <TableHead>Payment Type</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data?.sales?.map((sale) => (
-                <TableRow key={sale._id}>
-                  <TableCell>{sale?.clientName}</TableCell>
-                  <TableCell>{sale?.clientPhone}</TableCell>
-                  <TableCell className="flex  jusfify-center items-center gap-2">
-                    <Badge
-                      variant="secondary"
-                      className={`w-fit px-3 py-1 text-sm font-semibold ${
-                        sale?.paymentType.toLowerCase() === "full"
-                          ? "text-green-600 bg-green-100"
-                          : "text-red-600 bg-red-100"
-                      }`}
-                    >
-                      {sale?.paymentType}
-                    </Badge>
-
-                    {sale?.paymentType.toLowerCase() === "emi" &&
-                      sale?.dueDate && (
-                        <span className="text-sm text-gray-600">
-                          {format(new Date(sale.dueDate), "EEEE, MMMM d, yyyy")}
-                        </span>
-                      )}
-                  </TableCell>
-
-                  <TableCell>{sale?.product.productName}</TableCell>
-                  <TableCell>{sale?.price}</TableCell>
-                  <TableCell className="flex gap-4">
-                    <Link to={`/sales/${sale?._id}`}>
-                      <Button variant="ghost" size="icon" >
-                        <Eye className="w-5 h-5 text-blue-500" />
-                      </Button>{" "}
-                    </Link>
-                    <Link to={`/sale-management/${sale?._id}`}>
-                      <Button variant="ghost" size="icon">
-                        <Pencil className="w-5 h-5" />
-                      </Button>
-                    </Link>
-                  </TableCell>
+              </TableHeader>
+              <TableBody>
+                {[...Array(5)].map((_, index) => (
+                  <TableRow key={index}>
+                    {[...Array(8)].map((_, cellIndex) => (
+                      <TableCell key={cellIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : data?.sales?.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <p className="text-gray-500">No stocks available.</p>
+            </div>
+          ) : (
+            <Table className="w-full text-lg">
+              <TableHeader className="bg-gray-100">
+                <TableRow>
+                  <TableHead>Client Name</TableHead>
+                  <TableHead>Client Phone</TableHead>
+                  <TableHead>Payment Type</TableHead>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
-
-      {data?.sales?.length !== 0 && (
+              </TableHeader>
+              <TableBody>
+                {data?.sales?.map((sale) => (
+                  <TableRow key={sale._id}>
+                    <TableCell>{sale?.clientName}</TableCell>
+                    <TableCell>{sale?.clientPhone}</TableCell>
+                    <TableCell className="flex  jusfify-center items-center gap-2">
+                      <Badge
+                        variant="secondary"
+                        className={`w-fit px-3 py-1 text-sm font-semibold ${
+                          sale?.paymentType.toLowerCase() === "full"
+                            ? "text-green-600 bg-green-100"
+                            : "text-red-600 bg-red-100"
+                        }`}
+                      >
+                        {sale?.paymentType}
+                      </Badge>
+  
+                      {sale?.paymentType.toLowerCase() === "emi" &&
+                        sale?.dueDate && (
+                          <span className="text-sm text-gray-600">
+                            {format(new Date(sale.dueDate), "EEEE, MMMM d, yyyy")}
+                          </span>
+                        )}
+                    </TableCell>
+  
+                    <TableCell>{sale?.product.productName}</TableCell>
+                    <TableCell>{sale?.price}</TableCell>
+                    <TableCell className="flex gap-4">
+                      <Link to={`/sales/${sale?._id}`}>
+                        <Button variant="ghost" size="icon" >
+                          <Eye className="w-5 h-5 text-blue-500" />
+                        </Button>{" "}
+                      </Link>
+                      <Link to={`/sale-management/${sale?._id}`}>
+                        <Button variant="ghost" size="icon">
+                          <Pencil className="w-5 h-5" />
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+  
+</Card>
+      {data?.sales?.length !== 0 ||   data?.stocks?.length < 9 && (
         <Pagination className={"mt-5"}>
           <PaginationContent>
             <PaginationItem>
