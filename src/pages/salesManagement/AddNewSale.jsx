@@ -76,7 +76,7 @@ console.log(newData);
 
   return (
 <div className="p-3">
-      <Card className="p-6  mx-auto shadow-xl mt-3 mb-5">
+      <Card className="md:p-6 p-3  mx-auto shadow-xl mt-3 mb-5">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Add New Sale</CardTitle>
         </CardHeader>
@@ -90,6 +90,7 @@ console.log(newData);
         onChange={(e) => setBarcode(e.target.value)}
         placeholder="Enter barcode (বারকোড লিখুন)"
         className="text-lg h-12"
+        autoFocus
       />
       {errors.barcode && <p className="text-red-500 text-xs">{errors.barcode.message}</p>}
     </div>
@@ -166,6 +167,15 @@ console.log(newData);
   
     {/* Product Details */}
     <h3 className="text-xl font-semibold mt-8 mb-4">Product Details (পণ্য বিবরণ)</h3>
+
+    {productInfo?.image && (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium mb-2">Product Image (পণ্যের ছবি)</label>
+          <img src={`${import.meta.env.VITE_BASE_URL}/images/${productInfo?.image}`} alt="Product" className="w-1/2 rounded-md" />
+        </div>
+      )}
+
+
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium">Product Name (পণ্যের নাম)</label>
@@ -203,12 +213,7 @@ console.log(newData);
       </div>
   
       {/* Product Image */}
-      {productInfo?.image && (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium mb-2">Product Image (পণ্যের ছবি)</label>
-          <img src={productInfo?.image} alt="Product" className="w-24 h-24 rounded-md" />
-        </div>
-      )}
+  
     </div>
   
     {/* Submit Button */}

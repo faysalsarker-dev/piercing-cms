@@ -156,7 +156,7 @@ const ManageStock = () => {
           <TableCell className="p-3">{item?.karat}</TableCell>
           <TableCell className="p-3">{item?.bhori || ''} B / {item?.tola || 0} T / {item?.roti || 0} R</TableCell>
           <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
-          <TableCell className="p-3 flex space-x-2 items-center">
+          <TableCell className="p-3 flex space-x-2 items-center justify-center">
 
              <Link to={`/product/${item?._id}`}> 
             <Button variant="outline" size="icon" className="p-1">
@@ -185,7 +185,7 @@ const ManageStock = () => {
 
           </TableCell>
           <TableCell className="p-3">
-            {item.image ? <img src={`${import.meta.env.VITE_BASE_URL}/images/${item.image}`} alt={item.productName} width={30} height={30} className="rounded-md" /> : "No Image"}
+            {item.image ? <img src={`${import.meta.env.VITE_BASE_URL}/images/${item.image}`} alt={item.productName}  className="rounded-md w-14" /> : "No Image"}
           </TableCell>
         </TableRow>
       ))}
