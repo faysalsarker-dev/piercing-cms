@@ -80,9 +80,16 @@ const {logOut} = useAuth()
     <Sidebar collapsible="icon" >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel collapsible className="text-lg font-bold text-gray-800 mb-4 ">
-            Gold Management 
-          </SidebarGroupLabel>
+
+    <SidebarGroupLabel collapsible className="text-lg font-bold text-primary mb-3  cursor-pointer">
+     SHONJIB JEWELLERY
+    
+    </SidebarGroupLabel>
+   
+
+ <div className='border-b border-gray-300 mb-1'/>
+
+
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {

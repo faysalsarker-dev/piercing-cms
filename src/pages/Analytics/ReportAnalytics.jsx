@@ -16,28 +16,26 @@ import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis,  CartesianGrid, L
 
 const chartConfig = {
   totalAddedStock: {
-      label: "totalAddedStock",
-      color: "hsl(var(--chart-1))",
-    },
-    totalSoldProduct: {
-      label: "totalSoldProduct",
-      color: "hsl(var(--chart-2))",
-    },
-  } 
+    label: "Stock",
+    color: "hsl(210, 100%, 56%)", // সমৃদ্ধ নীল
+  },
+  totalSoldProduct: {
+    label: "Sold",
+    color: "hsl(120, 45%, 53%)", // ঠান্ডা টিয়াল
+  },
+
+};
 
 
 
+const categoryColors = [
+  "hsl(210, 100%, 56%)", // সমৃদ্ধ নীল
+  "hsl(200, 80%, 50%)", // ঠান্ডা টিয়াল
+  "hsl(45, 90%, 60%)",  // উজ্জ্বল সোনালি হলুদ
+  "hsl(335, 85%, 45%)", // গা dark ় রক্তচোখি লাল
+  "hsl(120, 45%, 53%)", // কোমল সবুজ
+];
 
-
-
-  const categoryColors = [
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))",
-    "hsl(var(--chart-3))",
-    "hsl(var(--chart-4))",
-    "hsl(var(--chart-5))",
-  
-  ];
 
 
 
@@ -82,7 +80,7 @@ const { data: categoriesSales, isLoading: isCategoryLoading, isError: isCategory
 });
 
 
-
+console.log(chartData,'categories');
 
 const chartConfigPie = categoriesSales?.salesByCategory?.reduce((acc, item, idx) => {
   acc[item.categoryName] = {
@@ -110,6 +108,10 @@ const totalSales = categoriesSales?.salesByCategory?.reduce(
   (sum, item) => sum + item.totalSalesCount,
   0
 );
+
+const totalAddedStock = chartData?.reduce((sum, item) => sum + item.totalAddedStock, 0);
+const totalSoldProduct = chartData?.reduce((sum, item) => sum + item.totalSoldProduct, 0);
+
   return (
     <div className="p-3 grid gap-6">
       {/* Yearly Stock vs Sales Report */}
@@ -150,29 +152,33 @@ const totalSales = categoriesSales?.salesByCategory?.reduce(
     )}
   </CardContent>
 
-      <CardFooter className="flex-col items-start gap-2 text-sm">
+  <CardFooter className="flex-col items-start gap-2 text-sm">
+  {/* Calculate the total of totalAddedStock */}
+  
   {/* Conditional Message for Yearly Sales */}
-  {data?.totalSalesCount > 500 && (
+  {totalAddedStock > 500 && (
     <div className="flex gap-2 font-medium leading-none text-green-500">
       <TrendingUp className="h-4 w-4" />
       <span>Excellent sales performance this year! You&apos;ve exceeded your sales target.</span>
     </div>
   )}
 
-  {data?.totalSalesCount <= 250 && data?.totalSalesCount > 500 && (
+  {/* Calculate the total of totalSoldProduct */}
+
+  {totalSoldProduct <= 250 && totalSoldProduct > 500 && (
     <div className="flex gap-2 font-medium leading-none text-yellow-500">
       <ShoppingCart className="h-4 w-4" />
       <span>Good sales performance this year. Keep pushing to reach your sales goal.</span>
     </div>
   )}
 
-  {data?.totalSalesCount <= 100 && (
+  {/* Conditional Message for slower sales */}
+  {chartData?.some(item => item.totalSalesCount <= 100) && (
     <div className="flex gap-2 font-medium leading-none text-red-500">
       <Box className="h-4 w-4" />
       <span>Sales are slower than expected. Consider reviewing your strategy for improvement.</span>
     </div>
   )}
-
 </CardFooter>
 
     </Card>
@@ -190,7 +196,7 @@ const totalSales = categoriesSales?.salesByCategory?.reduce(
       <CardHeader className="items-center pb-0">
       <CardHeader className="items-center pb-0">
   <CardTitle>Category-wise Sales Overview</CardTitle>
-  <CardDescription>Analyze which product categories</CardDescription>
+  <CardDescription>Analyze with categories </CardDescription>
 </CardHeader>
 
       </CardHeader>

@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -230,23 +231,80 @@ const ManageStock = () => {
 
       </Card>
 
- { data?.stocks?.length !== 0 ||   data?.stocks?.length < 9 && ( <Pagination className={'mt-5'}>
-        <PaginationContent>
+      {data?.total > 9 && (
+  <Pagination className="mt-5">
+    <PaginationContent>
+      {/* Previous */}
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+        />
+      </PaginationItem>
+
+      {/* First Page */}
+      {page > 2 && (
+        <>
           <PaginationItem>
-            <PaginationPrevious onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} />
+            <PaginationLink onClick={() => setPage(1)}>
+              1
+            </PaginationLink>
           </PaginationItem>
-          {[...Array(totalPages)].map((_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink onClick={() => setPage(index + 1)} className={page === index + 1 ? "bg-blue-500 text-white" : ""}>
-                {index + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
+          {page > 3 && <PaginationEllipsis />}
+        </>
+      )}
+
+      {/* Current -1 */}
+      {page > 1 && (
+        <PaginationItem>
+          <PaginationLink onClick={() => setPage(page - 1)}>
+            {page - 1}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Current Page */}
+      <PaginationItem>
+        <PaginationLink
+          onClick={() => setPage(page)}
+          className="bg-blue-500 text-white"
+        >
+          {page}
+        </PaginationLink>
+      </PaginationItem>
+
+      {/* Current +1 */}
+      {page < totalPages && (
+        <PaginationItem>
+          <PaginationLink onClick={() => setPage(page + 1)}>
+            {page + 1}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Last Page */}
+      {page < totalPages - 1 && (
+        <>
+          {page < totalPages - 2 && <PaginationEllipsis />}
           <PaginationItem>
-            <PaginationNext onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page === totalPages} />
+            <PaginationLink onClick={() => setPage(totalPages)}>
+              {totalPages}
+            </PaginationLink>
           </PaginationItem>
-        </PaginationContent>
-      </Pagination>)}
+        </>
+      )}
+
+      {/* Next */}
+      <PaginationItem>
+        <PaginationNext
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+)}
+
     </div>
   );
 };

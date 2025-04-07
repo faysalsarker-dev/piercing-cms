@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
+import { useNavigate } from "react-router-dom"
 
 export default function AddNewSale() {
   const {
@@ -20,9 +21,10 @@ export default function AddNewSale() {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm()
-
+const navigate = useNavigate()
   const paymentType = watch("paymentType")
   const [barcode, setBarcode] = useState("")
   const axiosSecure = useAxios()
@@ -54,7 +56,15 @@ export default function AddNewSale() {
       const { data } = await axiosSecure.post(`/sale`,info)
       return data
     },
-    onSuccess: () => toast.success("Sale added successfully."),
+    onSuccess: (data) => {
+    
+      reset()
+      navigate(`/sales/${data.sale._id}`)
+      toast.success("Sale added successfully.")
+    
+    
+    },
+     
     onError: () => toast.error("Failed to add sale."),
   })
 
@@ -68,8 +78,6 @@ export default function AddNewSale() {
       paidAmount: parseFloat(data.paidAmount),
       price: parseFloat(data.price),
     }
-
-console.log(newData);
 
     await mutateAsync(newData)
   }

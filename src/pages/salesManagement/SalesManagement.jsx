@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -261,38 +262,77 @@ export default function SalesManagement() {
         </div>
   
 </Card>
-      {data?.sales?.length !== 0 ||   data?.stocks?.length < 9 && (
-        <Pagination className={"mt-5"}>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={data?.totalPages === 1}
-              />
-            </PaginationItem>
-            {[...Array(data?.totalPages)].map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={
-                    currentPage === index + 1 ? "bg-blue-500 text-white" : ""
-                  }
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, data?.totalPages))
-                }
-                disabled={currentPage === data?.totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+{data?.totalPages > 1 && (
+  <Pagination className="mt-5">
+    <PaginationContent>
+      {/* Previous Button */}
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        />
+      </PaginationItem>
+
+      {/* First Page */}
+      {currentPage > 2 && (
+        <>
+          <PaginationItem>
+            <PaginationLink onClick={() => setCurrentPage(1)}>
+              1
+            </PaginationLink>
+          </PaginationItem>
+          {currentPage > 3 && <PaginationEllipsis />}
+        </>
       )}
+
+      {/* Current -1 */}
+      {currentPage > 1 && (
+        <PaginationItem>
+          <PaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+            {currentPage - 1}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Current Page */}
+      <PaginationItem>
+        <PaginationLink className="bg-blue-500 text-white" onClick={() => setCurrentPage(currentPage)}>
+          {currentPage}
+        </PaginationLink>
+      </PaginationItem>
+
+      {/* Current +1 */}
+      {currentPage < data.totalPages && (
+        <PaginationItem>
+          <PaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+            {currentPage + 1}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Last Page */}
+      {currentPage < data.totalPages - 1 && (
+        <>
+          {currentPage < data.totalPages - 2 && <PaginationEllipsis />}
+          <PaginationItem>
+            <PaginationLink onClick={() => setCurrentPage(data.totalPages)}>
+              {data.totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        </>
+      )}
+
+      {/* Next Button */}
+      <PaginationItem>
+        <PaginationNext
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, data.totalPages))}
+          disabled={currentPage === data.totalPages}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+)}
+
     </div>
   );
 }
