@@ -45,7 +45,7 @@ const navigate = useNavigate()
       setValue("category", productInfo?.category || "")
       setValue("karat", productInfo?.karat || "")
       setValue("bhori", productInfo?.bhori || 0)
-      setValue("tola", productInfo?.tola || 0)
+      setValue("ana", productInfo?.ana || 0)
       setValue("roti", productInfo?.roti || 0)
       setValue("cost", productInfo?.cost || 0)
     }
@@ -208,8 +208,8 @@ const navigate = useNavigate()
         <Input type="number" step="any" {...register("bhori")} placeholder="Bhori (ভরি)" className="text-lg h-12" />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Tola (তোলা)</label>
-        <Input type="number" step="any" {...register("tola")} placeholder="Tola (তোলা)" className="text-lg h-12" />
+        <label className="text-sm font-medium">ana (তোলা)</label>
+        <Input type="number" step="any" {...register("ana")} placeholder="ana (তোলা)" className="text-lg h-12" />
       </div>
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium">Roti (রতি)</label>

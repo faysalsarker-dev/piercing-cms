@@ -1,4 +1,4 @@
-import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, BarChart, LogOut } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, BarChart, LogOut,ClipboardList ,SquareChartGantt  } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +12,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuth from "@/hooks/useAuth/useAuth";
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 // Menu items.
 const items = [
@@ -19,6 +20,16 @@ const items = [
     title: "Dashboard",
     url: "/",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Add Order",
+    url: "/add-order",
+    icon: ClipboardList,
+  },
+  {
+    title: "Order Management",
+    url: "/stock-management/add-product",
+    icon: SquareChartGantt,
   },
   {
     title: "Add Product",
@@ -77,86 +88,79 @@ const {logOut} = useAuth()
 
 
   return (
-    <Sidebar collapsible="icon" >
-      <SidebarContent>
-        <SidebarGroup>
-
-    <SidebarGroupLabel collapsible className="text-lg font-bold text-primary mb-3  cursor-pointer">
-     SHONJIB JEWELLERY
-    
-    </SidebarGroupLabel>
-   
-
- <div className='border-b border-gray-300 mb-1'/>
-
-
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                  size='lg'
-                      className={`
-                        
-           
-                                   ${
-                        isActive
-                          ? "bg-orange-100 text-primary font-extrabold"
-                          : "text-gray-700 hover:bg-gray-200"
-                      }
-                      
-                      `}
-                      asChild
-                    >
-
-                      
-                      <Link to={item.url}>
-                        <item.icon size={10}  color="currentColor" strokeWidth={isActive ? 3 : 2} />
-                        <span className={` ${isActive ? 'font-bold' : 'font-medium'}`}>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-             
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-  
-        <div className="mt-auto px-4 py-3 border-t border-gray-300">
-          
-          <SidebarMenuButton
-            className="flex items-center gap-3 w-full text-gray-700 px-4 py-3 rounded-md hover:bg-red-500 hover:text-white transition-all"
-            asChild
-          >
-            <button onClick={handleLogout}>
-              <LogOut className="w-5 h-5" />
-              <span className="font-medium">Logout</span>
-            </button>
-          </SidebarMenuButton>
-          <div className='flex justify-start p-2 mt-4'>
-      <a 
-                href="https://faysal-sarker.netlify.app" 
-                target="_blank"
-                rel="noopener noreferrer" className="text-base"> 
-        Developed by  {''}
-            <span className="text-blue-500 font-bold">
-            
-                   Faysal Sarker
-             
-            </span>
-            
-          </a>
+    <Sidebar collapsible="icon">
+    <SidebarContent className="flex flex-col h-full">
+      {/* Header */}
+      <div className="shrink-0">
+        <SidebarGroupLabel collapsible className="text-lg font-bold text-primary mb-3 px-4 pt-4">
+          SHONJIB JEWELLERY
+        </SidebarGroupLabel>
+        <div className="border-b border-gray-300 mb-1" />
       </div>
-        </div>
 
-      
+      {/* Scrollable Menu Area */}
+      <div className="flex-1 overflow-y-auto">
+        <ScrollArea className="h-full">
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => {
+                  const isActive = location.pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        size="lg"
+                        className={`${
+                          isActive
+                            ? "bg-orange-100 text-primary font-extrabold"
+                            : "text-gray-700 hover:bg-gray-200"
+                        }`}
+                        asChild
+                      >
+                        <Link to={item.url}>
+                          <item.icon
+                            size={10}
+                            color="currentColor"
+                            strokeWidth={isActive ? 3 : 2}
+                          />
+                          <span className={`${isActive ? "font-bold" : "font-medium"}`}>
+                            {item.title}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </ScrollArea>
+      </div>
 
-      
-      </SidebarContent>
-    </Sidebar>
+      {/* Footer */}
+      <div className="shrink-0 border-t border-gray-300 px-4 py-3">
+        {/* <SidebarMenuButton
+          className="flex items-center gap-3 w-full text-gray-700 px-4 py-3 rounded-md hover:bg-red-500 hover:text-white transition-all"
+          asChild
+        >
+          <button onClick={handleLogout}>
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">Logout</span>
+          </button>
+        </SidebarMenuButton> */}
+        <SidebarGroupLabel collapsible className="flex justify-start p-2 mt-4">
+          <a
+            href="https://faysal-sarker.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-base"
+          >
+            Developed by{" "}
+            <span className="text-blue-500 font-bold">Faysal Sarker</span>
+          </a>
+        </SidebarGroupLabel>
+      </div>
+    </SidebarContent>
+  </Sidebar>
   );
 }

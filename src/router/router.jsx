@@ -13,6 +13,8 @@ import Login from "@/pages/Auth/Login";
 import Protector from "./Protector";
 import UpdateSale from "@/pages/SinglePage/UpdateSale";
 import UpdateStock from "@/pages/SinglePage/UpdateStock";
+import AddOrder from "@/pages/Orders/AddOrder";
+import ManageOrders from "@/pages/Orders/ManageOrders";
 
 
 const router = createBrowserRouter([
@@ -64,6 +66,18 @@ const router = createBrowserRouter([
         {
           path:'/stock-management/:id',
           element:<UpdateStock/>
+      },
+        {
+          path:'/stock-management/:id',
+          element:<UpdateStock/>
+      },
+        {
+          path:'/add-order',
+          element:<AddOrder/>
+      },
+        {
+          path:'/manage-orders',
+          element:<ManageOrders/>
       },
     
     ],

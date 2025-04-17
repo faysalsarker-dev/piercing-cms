@@ -77,8 +77,8 @@ export default function TopBar() {
         {/* Notification Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            <Button variant="ghost" size="icon" className="relative bg-gray-300 rounded-full">
+              <Bell className="w-7 h-7 text-gray-700 dark:text-gray-300   " />
               {data.length > 0 && (
                 <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
               )}

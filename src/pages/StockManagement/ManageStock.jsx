@@ -155,7 +155,7 @@ const ManageStock = () => {
           <TableCell className="p-3">{item?.category}</TableCell>
           <TableCell className="p-3">{item?.weight}(g)</TableCell>
           <TableCell className="p-3">{item?.karat}</TableCell>
-          <TableCell className="p-3">{item?.bhori || ''} B / {item?.tola || 0} T / {item?.roti || 0} R</TableCell>
+          <TableCell className="p-3">{item?.bhori || ''} B / {item?.ana || 0} T / {item?.roti || 0} R</TableCell>
           <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
           <TableCell className="p-3 flex space-x-2 items-center justify-center">
 

@@ -42,7 +42,7 @@ const navigate = useNavigate()
       setValue("weight", productData.weight);
       setValue("karat", productData.karat);
       setValue("bhori", productData.bhori);
-      setValue("tola", productData.tola);
+      setValue("ana", productData.ana);
       setValue("roti", productData.roti);
       setValue("cost", parseFloat(productData.cost));
       setImagePreview(productData.imageUrl);
@@ -224,14 +224,14 @@ const navigate = useNavigate()
         />
       </div>
   
-      {/* Tola */}
+      {/* ana */}
       <div className="flex flex-col gap-1">
-        <Label>Tola (তোলা)</Label>
+        <Label>ana (তোলা)</Label>
         <Input
           type="number"
           step="any"
           min="0"
-          {...register("tola")}
+          {...register("ana")}
           className="h-12 text-base md:text-lg"
         />
       </div>

@@ -80,7 +80,6 @@ const { data: categoriesSales, isLoading: isCategoryLoading, isError: isCategory
 });
 
 
-console.log(chartData,'categories');
 
 const chartConfigPie = categoriesSales?.salesByCategory?.reduce((acc, item, idx) => {
   acc[item.categoryName] = {

@@ -56,7 +56,7 @@ export default function UpdateSale() {
       setValue("category", saleInfo?.product?.category || "")
       setValue("karat", saleInfo?.product?.karat || "")
       setValue("bhori", saleInfo?.product?.bhori || 0)
-      setValue("tola", saleInfo?.product?.tola || 0)
+      setValue("ana", saleInfo?.product?.ana || 0)
       setValue("roti", saleInfo?.product?.roti || 0)
       setValue("cost", saleInfo?.product?.cost || 0)
     }
@@ -199,8 +199,8 @@ export default function UpdateSale() {
               <Input type="number" step="any" {...register("bhori")} placeholder="Bhori (ভরি)" className="text-lg h-12" disabled />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Tola (তোলা)</label>
-              <Input type="number" step="any" {...register("tola")} placeholder="Tola (তোলা)" className="text-lg h-12" disabled />
+              <label className="text-sm font-medium">ana (তোলা)</label>
+              <Input type="number" step="any" {...register("ana")} placeholder="ana (তোলা)" className="text-lg h-12" disabled />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Roti (রতি)</label>

@@ -113,7 +113,7 @@ const ProductDetails = () => {
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-gray-600">
               <p><strong>Bhori:</strong> {product?.bhori || "N/A"}</p>
-              <p><strong>Tola:</strong> {product?.tola || "N/A"}</p>
+              <p><strong>ana:</strong> {product?.ana || "N/A"}</p>
               <p><strong>Roti:</strong> {product?.roti || "N/A"}</p>
               <p>
                 <strong>Added On:</strong>{" "}

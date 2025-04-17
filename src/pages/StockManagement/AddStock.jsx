@@ -61,7 +61,7 @@ export default function AddStock() {
         barcode: variables.get("barcode"),
         weight: variables.get("weight"),
         bhori: variables.get("bhori"),
-        tola: variables.get("tola"),
+        ana: variables.get("ana"),
         roti: variables.get("roti"),
       });
       reset();
@@ -204,14 +204,14 @@ export default function AddStock() {
         />
       </div>
   
-      {/* Tola */}
+      {/* ana */}
       <div className="flex flex-col gap-1">
-        <Label>Tola (তোলা)</Label>
+        <Label>ana (তোলা)</Label>
         <Input
           type="number"
           step="any"
           min="0"
-          {...register("tola")}
+          {...register("ana")}
           className="h-12 text-lg"
         />
       </div>

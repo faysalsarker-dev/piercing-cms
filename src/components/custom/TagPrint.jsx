@@ -3,7 +3,7 @@ import { useReactToPrint } from "react-to-print";
 import Barcode from "react-barcode";
 
 // Printable Tag Content Component
-const TagContent = ({ barcode, weight, bhori, tola, roti }) => (
+const TagContent = ({ barcode, weight, bhori, ana, roti }) => (
   <div
     className="w-[38.1mm] h-[25.4mm] p-1 border border-gray-300 rounded-sm shadow-sm bg-white text-gray-800 text-[7px] leading-tight flex items-center justify-between"
   >
@@ -15,14 +15,14 @@ const TagContent = ({ barcode, weight, bhori, tola, roti }) => (
     <div className="flex flex-col justify-center w-1/2 pl-1">
       {weight && <p>Weight: {weight}g</p>}
       {bhori && <p>Bhori: {bhori}</p>}
-      {tola && <p>Tola: {tola}</p>}
+      {ana && <p>ana: {ana}</p>}
       {roti && <p>Roti: {roti}</p>}
     </div>
   </div>
 );
 
 // Main Tag Print Component
-const TagPrint = ({ barcode, weight, bhori, tola, roti }) => {
+const TagPrint = ({ barcode, weight, bhori, ana, roti }) => {
   const componentRef = useRef();
 
   const handlePrint = useReactToPrint({
@@ -46,7 +46,7 @@ const TagPrint = ({ barcode, weight, bhori, tola, roti }) => {
           barcode={barcode}
           weight={weight}
           bhori={bhori}
-          tola={tola}
+          ana={ana}
           roti={roti}
         />
       </div>
