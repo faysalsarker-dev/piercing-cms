@@ -160,8 +160,18 @@ const navigate = useNavigate()
             </div>
 
             <div className="flex flex-col gap-1">
-              <Label>Advance Paid</Label>
+              <Label>Advance Amount (আগে কত টাকা দিয়েছে)</Label>
               <Input type="number" step="any" {...register("advancePaid")} />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Due (বাকি)</Label>
+              <Input type="number" step="any" {...register("due")} />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Now Paying Amount (আজকে কত টাকা দিবে)</Label>
+              <Input type="number" step="any" {...register("todaysPaidAmount")} />
             </div>
 
             <div className="flex flex-col gap-1">

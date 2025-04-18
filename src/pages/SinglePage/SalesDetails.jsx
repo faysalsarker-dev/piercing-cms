@@ -91,7 +91,10 @@ const SalesDetails = () => {
               <p><strong>Payment Type:</strong> {sale?.paymentType}</p>
               {
                 sale?.paymentType === "emi" && (
-                  <p><strong>Paid Amount:</strong> ৳ {sale?.paidAmount}</p>
+                 <div>
+                    <p><strong>Paid Amount:</strong> ৳ {sale?.paidAmount}</p>
+                    <p><strong>Due Amount:</strong> ৳ {sale?.due}</p>
+                 </div>
                 )
               }
              

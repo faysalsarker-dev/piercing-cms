@@ -29,7 +29,6 @@ export default function Dashboard() {
   });
 
 
-
   if (error) {
     return <div>Error fetching data</div>;
   }
@@ -41,51 +40,85 @@ export default function Dashboard() {
 
 
 
-  const totalAddedStock = data?.weeklyReports.reduce((total, item) => total + item.addedStockCount, 0);
-  const totalAddedSales = data?.weeklyReports.reduce((total, item) => total + item.soldProductCount, 0);
-
+  
 
 
   return (
     <div className="p-6 grid gap-6">
  
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle><ShoppingCart className="inline-block mr-2" /> This Month Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{totalAddedStock}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle><Box className="inline-block mr-2" /> This Month Stock</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{totalAddedSales}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>
-            <ListOrdered className="inline-block mr-2" />
-               This Month Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{totalAddedSales}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle><DollarSign className="inline-block mr-2" /> This Month Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold"><span className="font-extrabold">৳ </span>{data?.totalSalesAmount}</p>
-          </CardContent>
-        </Card>
+  
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {/* Monthly Sales */}
+  <Card className="hover:shadow-lg transition-shadow duration-300">
+    <CardHeader className="flex flex-col items-start gap-2">
+      <div className="flex items-center text-primary">
+        <ShoppingCart className="w-6 h-6 mr-2" />
+        <CardTitle className="text-lg font-semibold">Monthly Sales</CardTitle>
       </div>
+      <p className="text-sm text-muted-foreground">Total items sold this month</p>
+    </CardHeader>
+    <CardContent>
+      <p className="text-3xl font-bold text-foreground">
+        {data?.totalSoldProductCount ?? 0}
+      </p>
+    </CardContent>
+  </Card>
+
+  {/* Monthly Stock */}
+  <Card className="hover:shadow-lg transition-shadow duration-300">
+    <CardHeader className="flex flex-col items-start gap-2">
+      <div className="flex items-center text-blue-500">
+        <Box className="w-6 h-6 mr-2" />
+        <CardTitle className="text-lg font-semibold">Stock Added</CardTitle>
+      </div>
+      <p className="text-sm text-muted-foreground">New stock added this month</p>
+    </CardHeader>
+    <CardContent>
+      <p className="text-3xl font-bold text-foreground">
+        {data?.totalAddedStockCount ?? 0}
+      </p>
+    </CardContent>
+  </Card>
+
+  {/* Monthly Orders */}
+  <Card className="hover:shadow-lg transition-shadow duration-300">
+    <CardHeader className="flex flex-col items-start gap-2">
+      <div className="flex items-center text-green-600">
+        <ListOrdered className="w-6 h-6 mr-2" />
+        <CardTitle className="text-lg font-semibold">Order Summary</CardTitle>
+      </div>
+      <p className="text-sm text-muted-foreground">Orders received and completed</p>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col space-y-1">
+        <span className="text-lg font-medium text-muted-foreground">
+          Total Orders: <span className="text-xl font-bold text-foreground">{data?.totalAddedOrderCount ?? 0}</span>
+        </span>
+        <span className="text-lg font-medium text-muted-foreground">
+          Completed: <span className="text-xl font-bold text-green-700">{data?.totalCompletedOrderCount ?? 0}</span>
+        </span>
+      </div>
+    </CardContent>
+  </Card>
+
+  {/* Monthly Revenue */}
+  <Card className="hover:shadow-lg transition-shadow duration-300">
+    <CardHeader className="flex flex-col items-start gap-2">
+      <div className="flex items-center text-yellow-500">
+        <DollarSign className="w-6 h-6 mr-2" />
+        <CardTitle className="text-lg font-semibold">Revenue</CardTitle>
+      </div>
+      <p className="text-sm text-muted-foreground">Total earnings this month</p>
+    </CardHeader>
+    <CardContent>
+      <p className="text-3xl font-bold text-foreground">
+        <span className="font-extrabold">৳</span> {data?.totalRevenue ?? 0}
+      </p>
+    </CardContent>
+  </Card>
+</div>
+
 
       {/* Chart */}
 {
@@ -107,7 +140,7 @@ export default function Dashboard() {
     </CardHeader>
     <CardContent>
       <ChartContainer config={chartConfig}>
-        <BarChart accessibilityLayer data={data?.weeklyReports || []}>
+        <BarChart accessibilityLayer data={data?.weeklyChartData || []}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="week"
@@ -118,6 +151,8 @@ export default function Dashboard() {
           <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
           <Bar dataKey="addedStockCount" fill="var(--color-addedStockCount)" radius={4} />
           <Bar dataKey="soldProductCount" fill="var(--color-soldProductCount)" radius={4} />
+          <Bar dataKey="addedOrderCount" fill="var(--color-addedStockCount)" radius={4} />
+          <Bar dataKey="completedOrderCount" fill="var(--color-soldProductCount)" radius={4} />
         </BarChart>
       </ChartContainer>
     </CardContent>

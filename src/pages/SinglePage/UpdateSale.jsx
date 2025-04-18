@@ -23,6 +23,7 @@ export default function UpdateSale() {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm()
 
@@ -31,7 +32,7 @@ export default function UpdateSale() {
   const axiosSecure = useAxios()
 
   // Fetching sale data for the update
-  const { data: saleInfo } = useQuery({
+  const { data: saleInfo,refetch } = useQuery({
     queryKey: ["saleInfo", id],
     queryFn: async () => {
       const response = await axiosSecure.get(`/sale/${id}`)
@@ -49,9 +50,10 @@ export default function UpdateSale() {
       setValue("clientName", saleInfo?.clientName || "")
       setValue("clientPhone", saleInfo?.clientPhone || "")
       setValue("price", saleInfo?.price || 0)
+      setValue("due", saleInfo?.due || 0)
       setValue("paidAmount", saleInfo?.paidAmount || 0)
       setValue("paymentType", saleInfo?.paymentType || "")
-      setValue("dueDate", saleInfo?.dueDate || "")
+      setDate(saleInfo?.dueDate || null)
       setValue("productName", saleInfo?.product?.productName || "")
       setValue("category", saleInfo?.product?.category || "")
       setValue("karat", saleInfo?.product?.karat || "")
@@ -67,7 +69,10 @@ export default function UpdateSale() {
       const { data } = await axiosSecure.put(`/sale/${id}`, info)
       return data
     },
-    onSuccess: () => toast.success("Sale updated successfully."),
+    onSuccess: () =>{
+      reset()
+      refetch()
+      toast.success("Sale updated successfully.")},
     onError: () => toast.error("Failed to update sale."),
   })
 
@@ -77,13 +82,11 @@ export default function UpdateSale() {
     const newData = {
       ...data,
       dueDate: formattedDate,
-      paidAmount: parseFloat(data.paidAmount),
-      price: parseFloat(data.price),
+      todaysPaidAmount:parseFloat(data?.todaysPaidAmount)
     }
 
     await mutateAsync(newData)
   }
-
   return (
     <Card className="p-6 max-w-4xl mx-auto shadow-xl mt-3 mb-5">
       <CardHeader>
@@ -118,12 +121,19 @@ export default function UpdateSale() {
           </div>
 
           {/* Price */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Price (মূল্য)</label>
-            <Input type="number" step="any" {...register("price", { required: "Price is required" })} placeholder="Total Price (মোট মূল্য)" className="text-lg h-12" />
-            {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
-          </div>
-
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Price (মূল্য)</label>
+              <Input readOnly type="number" step="any" {...register("price", { required: "Price is required" })} placeholder="Total Price (মোট মূল্য)" className="text-lg h-12" />
+              {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
+            </div>
+   { saleInfo?.due &&        <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Due (বাকি)</label>
+              <Input readOnly type="number" step="any" {...register("due", { required: "Price is required" })} placeholder="Total Price (মোট মূল্য)" className="text-lg h-12" />
+              {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
+            </div>
+  }
+ </div>
           {/* Payment Type & Date (if EMI) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
@@ -167,10 +177,16 @@ export default function UpdateSale() {
 
           {/* Now Paying (if EMI) */}
           {paymentType === "emi" && (
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Now Paying Amount (একখন কত টাকা দিয়েছে)</label>
-              <Input type="number" step="any" {...register("paidAmount")} placeholder="Enter current payment (বর্তমানে কত টাকা প্রদান করেছেন)" className="text-lg h-12" />
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Paid Amount (আগে কত টাকা দিয়েছে)</label>
+                <Input readOnly type="number" step="any" {...register("paidAmount")} placeholder="Enter current payment (বর্তমানে কত টাকা প্রদান করেছেন)" className="text-lg h-12" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Now Paying Amount (আজকে কত টাকা দিবে)</label>
+                <Input type="number" step="any" {...register("todaysPaidAmount")} placeholder="Enter current payment (আজকে কত টাকা প্রদান করেছেন)" className="text-lg h-12" />
+              </div>
+      </div>
           )}
 
           {/* Product Details */}
@@ -178,16 +194,16 @@ export default function UpdateSale() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Product Name (পণ্যের নাম)</label>
-              <Input {...register("productName", { required: "Product name is required" })} placeholder="Product name (পণ্যের নাম)" className="text-lg h-12" disabled />
+              <Input {...register("productName", { required: "Product name is required" })} placeholder="Product name (পণ্যের নাম)" className="text-lg h-12" readOnly />
               {errors.productName && <p className="text-red-500 text-xs">{errors.productName.message}</p>}
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Category (শ্রেণী)</label>
-              <Input {...register("category")} placeholder="Category (শ্রেণী)" className="text-lg h-12" disabled />
+              <Input {...register("category")} placeholder="Category (শ্রেণী)" className="text-lg h-12" readOnly />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Karat (ক্যারাট)</label>
-              <Input {...register("karat", { required: "Karat is required" })} placeholder="Karat (ক্যারাট)" className="text-lg h-12" disabled />
+              <Input {...register("karat", { required: "Karat is required" })} placeholder="Karat (ক্যারাট)" className="text-lg h-12" readOnly />
               {errors.karat && <p className="text-red-500 text-xs">{errors.karat.message}</p>}
             </div>
           </div>
@@ -196,19 +212,19 @@ export default function UpdateSale() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Bhori (ভরি)</label>
-              <Input type="number" step="any" {...register("bhori")} placeholder="Bhori (ভরি)" className="text-lg h-12" disabled />
+              <Input type="number" step="any" {...register("bhori")} placeholder="Bhori (ভরি)" className="text-lg h-12" readOnly />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">ana (তোলা)</label>
-              <Input type="number" step="any" {...register("ana")} placeholder="ana (তোলা)" className="text-lg h-12" disabled />
+              <Input type="number" step="any" {...register("ana")} placeholder="ana (তোলা)" className="text-lg h-12" readOnly />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Roti (রতি)</label>
-              <Input type="number" step="any" {...register("roti")} placeholder="Roti (রতি)" className="text-lg h-12" disabled />
+              <Input type="number" step="any" {...register("roti")} placeholder="Roti (রতি)" className="text-lg h-12" readOnly />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium mb-2">Cost (মূল্য)</label>
-              <Input type="number" step="any" {...register("cost")} placeholder="Cost (মূল্য)" className="text-lg h-12" disabled />
+              <Input type="number" step="any" {...register("cost")} placeholder="Cost (মূল্য)" className="text-lg h-12" readOnly />
             </div>
           </div>
 

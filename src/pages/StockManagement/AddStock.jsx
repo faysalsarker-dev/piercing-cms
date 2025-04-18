@@ -25,7 +25,7 @@ export default function AddStock() {
   const [tagData, setTagData] = useState(null);
 
   // Fetch Barcode
-  const { data: barcode } = useQuery({
+  const { data: barcode ,refetch} = useQuery({
     queryKey: ["barcode"],
     queryFn: async () => {
       const res = await axiosSecure.get("/stocks/barcode");
@@ -66,6 +66,7 @@ export default function AddStock() {
       });
       reset();
       setImagePreview(null);
+      refetch()
       setValue("image", null)
       toast.success("Stock added successfully!")},
     onError: () => toast.error("An error occurred while adding stock."),
@@ -206,7 +207,7 @@ export default function AddStock() {
   
       {/* ana */}
       <div className="flex flex-col gap-1">
-        <Label>ana (তোলা)</Label>
+        <Label>ana (আনা)</Label>
         <Input
           type="number"
           step="any"
@@ -215,6 +216,11 @@ export default function AddStock() {
           className="h-12 text-lg"
         />
       </div>
+      <div className="flex flex-col gap-1">
+              <Label>Point (পয়েন্ট)  <span className="text-red-500">*</span></Label>
+              <Input type="number" step="any" min="0" {...register("point")} className="h-12 text-lg" />
+            </div>
+
   
       {/* Roti */}
       <div className="flex flex-col gap-1">
