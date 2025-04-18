@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, ShoppingCart, Box, DollarSign } from "lucide-react";
+import { TrendingUp, ShoppingCart, Box, DollarSign, ListOrdered } from "lucide-react";
 import { BarChart, Bar, CartesianGrid, XAxis } from "recharts";
 import { useState } from "react";
 
@@ -50,7 +50,7 @@ export default function Dashboard() {
     <div className="p-6 grid gap-6">
  
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader>
             <CardTitle><ShoppingCart className="inline-block mr-2" /> This Month Sales</CardTitle>
@@ -62,6 +62,16 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle><Box className="inline-block mr-2" /> This Month Stock</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalAddedSales}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+            <ListOrdered className="inline-block mr-2" />
+               This Month Orders</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totalAddedSales}</p>

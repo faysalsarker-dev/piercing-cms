@@ -60,7 +60,23 @@ export default function ManageOrders() {
       return response.data;
     },
   });
-console.log(data);
+
+
+
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/categories");
+      return response.data || [];
+    },
+  });
+
+
+
+
+
+
   const handleSearch = debounce((value) => {
     setSearch(value);
   }, 500);
@@ -73,7 +89,7 @@ console.log(data);
     <div className="p-6 w-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Manage Orders</h2>
-        <Link to="/orders/add">
+        <Link to="/add-order">
           <Button className="bg-primary">Add New Order</Button>
         </Link>
       </div>
@@ -88,24 +104,26 @@ console.log(data);
         </div>
 
         <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4 bg-sidebar">
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder="Filter Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="ring">Ring</SelectItem>
-              <SelectItem value="necklace">Necklace</SelectItem>
-              {/* Add more as needed */}
-            </SelectContent>
-          </Select>
+          <Select value={category} onValueChange={(value) => setCategory(value)}>
+             <SelectTrigger className="w-full h-12 text-lg">
+               <SelectValue placeholder="Select Category" />
+             </SelectTrigger>
+             <SelectContent>
+               <SelectItem value="all">All Categories</SelectItem>
+               {categories.map((category) => (
+                 <SelectItem key={category._id} value={category.name}>
+                   {category.name}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
 
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="h-12">
               <SelectValue placeholder="Order Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="in-progress">In Progress</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
@@ -126,7 +144,7 @@ console.log(data);
         </div>
       </div>
 
-      <Card className="w-full shadow-lg">
+      <Card className="w-full shadow-lg rounded-none">
         <div className="overflow-x-auto">
           {isLoading ? (
             <SkeletonTable />
@@ -185,12 +203,12 @@ console.log(data);
                         : "N/A"}
                     </TableCell>
                     <TableCell className="flex gap-2">
-                      <Link to={`/orders/${order._id}`}>
+                      <Link to={`/orders-details/${order._id}`}>
                         <Button variant="ghost" size="icon">
                           <Eye className="w-5 h-5 text-blue-500" />
                         </Button>
                       </Link>
-                      <Link to={`/orders/edit/${order._id}`}>
+                      <Link to={`/update-orders/${order._id}`}>
                         <Button variant="ghost" size="icon">
                           <Pencil className="w-5 h-5 text-gray-700" />
                         </Button>

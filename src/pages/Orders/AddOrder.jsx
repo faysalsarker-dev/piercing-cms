@@ -13,6 +13,7 @@ import { useState } from "react";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useNavigate } from "react-router-dom";
 
 export default function AddOrder() {
   const {
@@ -24,7 +25,7 @@ export default function AddOrder() {
     formState: { errors },
   } = useForm();
   const [date, setDate] = useState(null);
-
+const navigate = useNavigate()
   const axiosSecure = useAxios();
 
   const { data: categories } = useQuery({
@@ -47,10 +48,13 @@ export default function AddOrder() {
       const { data } = await axiosSecure.post("/orders", orderData);
       return data;
     },
-    onSuccess: () => {
-      toast.success("Order added successfully!");
-      reset();
+    onSuccess: (data) => {
+       reset();
       setDate(null);
+      navigate(`/orders-details/${data?._id}`)
+      toast.success("Order added successfully!");
+     
+
     },
     onError: () => toast.error("Failed to add order."),
   });

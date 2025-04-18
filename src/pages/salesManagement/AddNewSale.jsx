@@ -120,7 +120,7 @@ const navigate = useNavigate()
     {/* Price */}
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium">Price (মূল্য)</label>
-      <Input type="number" step="any" {...register("price", { required: "Price is required" })} placeholder="Total Price (মোট মূল্য)" className="text-lg h-12" />
+      <Input type="number" min='0' step="any" {...register("price", { required: "Price is required" })} placeholder="Total Price (মোট মূল্য)" className="text-lg h-12" />
       {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
     </div>
   
@@ -169,7 +169,7 @@ const navigate = useNavigate()
     {paymentType === "emi" && (
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium">Now Paying Amount (একখন কত টাকা দিয়েছে)</label>
-        <Input type="number" step="any" {...register("paidAmount")} placeholder="Enter current payment (বর্তমানে কত টাকা প্রদান করেছেন)" className="text-lg h-12" />
+        <Input min='0' type="number" defaultValue={0} step="any" {...register("paidAmount")} placeholder="Enter current payment (বর্তমানে কত টাকা প্রদান করেছেন)" className="text-lg h-12" />
       </div>
     )}
   
@@ -217,7 +217,7 @@ const navigate = useNavigate()
       </div>
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium mb-2">Cost (খরচ)</label>
-        <Input type="number" step="any" {...register("cost")} placeholder="Cost (খরচ)" className="text-lg h-12" />
+        <Input disabled type="number" step="any" {...register("cost")} placeholder="Cost (খরচ)" className="text-lg h-12" />
       </div>
   
       {/* Product Image */}

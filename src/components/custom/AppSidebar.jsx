@@ -12,7 +12,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuth from "@/hooks/useAuth/useAuth";
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { ScrollArea } from '../ui/scroll-area';
 
 // Menu items.
 const items = [
@@ -28,7 +28,7 @@ const items = [
   },
   {
     title: "Order Management",
-    url: "/stock-management/add-product",
+    url: "/manage-orders",
     icon: SquareChartGantt,
   },
   {

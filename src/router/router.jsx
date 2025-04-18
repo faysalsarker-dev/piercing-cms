@@ -15,6 +15,8 @@ import UpdateSale from "@/pages/SinglePage/UpdateSale";
 import UpdateStock from "@/pages/SinglePage/UpdateStock";
 import AddOrder from "@/pages/Orders/AddOrder";
 import ManageOrders from "@/pages/Orders/ManageOrders";
+import OrderDetailsPage from "@/pages/Orders/OrderDetailsPage";
+import UpdateOrder from "@/pages/Orders/UpdateOrder";
 
 
 const router = createBrowserRouter([
@@ -78,6 +80,14 @@ const router = createBrowserRouter([
         {
           path:'/manage-orders',
           element:<ManageOrders/>
+      },
+        {
+          path:'/orders-details/:id',
+          element:<OrderDetailsPage/>
+      },
+        {
+          path:'/update-orders/:id',
+          element:<UpdateOrder/>
       },
     
     ],
