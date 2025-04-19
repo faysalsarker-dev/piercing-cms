@@ -71,6 +71,7 @@ const navigate = useNavigate()
     mutationFn: async (updatedData) => {
       const res = await axiosSecure.patch(`/orders/${id}`, {
         ...updatedData,
+        todaysPaidAmount:parseFloat(updatedData.todaysPaidAmount),
         deliveryDate: date,
       });
       return res.data;

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Trash, Pencil } from "lucide-react";
+import { Loader2, Trash, Pencil, ArrowBigLeft } from "lucide-react";
 import { format } from "date-fns";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 import { useState } from "react";
@@ -50,13 +50,21 @@ const ProductDetails = () => {
       <div className="max-w-5xl mx-auto p-6 sm:p-10 bg-white rounded-2xl shadow-lg">
         {/* Product Header */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <div className="flex gap-3">
+          <Link to='/stock-management'>
+          <Button  size="icon" variant="outline" >
+            <ArrowBigLeft />
+                        </Button>
+  </Link>
           <div>
-            <h1 className="md:text-3xl font-bold text-gray-800 mb-1">
-            Product Name: {product?.productName}
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Category: <span className="font-medium">{product?.category}</span>
-            </p>
+              <h1 className="md:text-3xl font-bold text-gray-800 mb-1">
+              Product Name: {product?.productName}
+              </h1>
+            
+              <p className="text-gray-500 text-sm">
+                Category: <span className="font-medium">{product?.category}</span>
+              </p>
+          </div>
           </div>
           <div className="flex gap-3 mt-4 sm:mt-0">
      <Link to={`/stock-management/${id}`}>

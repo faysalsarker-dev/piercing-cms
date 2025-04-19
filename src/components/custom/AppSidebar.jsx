@@ -1,4 +1,4 @@
-import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, BarChart, LogOut,ClipboardList ,SquareChartGantt  } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, BarChart, LogOut,ClipboardList ,SquareChartGantt, CodeXml  } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +21,14 @@ const items = [
     url: "/",
     icon: LayoutDashboard,
   },
+ 
   {
+    title: "Add Product",
+    url: "/stock-management/add-product",
+    icon: PlusCircle,
+  },
+
+   {
     title: "Add Order",
     url: "/add-order",
     icon: ClipboardList,
@@ -30,11 +37,6 @@ const items = [
     title: "Order Management",
     url: "/manage-orders",
     icon: SquareChartGantt,
-  },
-  {
-    title: "Add Product",
-    url: "/stock-management/add-product",
-    icon: PlusCircle,
   },
   {
     title: "Stock Management",
@@ -94,6 +96,8 @@ const {logOut} = useAuth()
       <div className="shrink-0">
         <SidebarGroupLabel collapsible className="text-lg font-bold text-primary mb-3 px-4 pt-4">
           SHONJIB JEWELLERY
+
+         
         </SidebarGroupLabel>
         <div className="border-b border-gray-300 mb-1" />
       </div>
@@ -139,17 +143,9 @@ const {logOut} = useAuth()
 
       {/* Footer */}
       <div className="shrink-0 border-t border-gray-300 px-4 py-3">
-        {/* <SidebarMenuButton
-          className="flex items-center gap-3 w-full text-gray-700 px-4 py-3 rounded-md hover:bg-red-500 hover:text-white transition-all"
-          asChild
-        >
-          <button onClick={handleLogout}>
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </button>
-        </SidebarMenuButton> */}
+       
         <SidebarGroupLabel collapsible className="flex justify-start p-2 mt-4">
-          <a
+        <CodeXml />  <a
             href="https://faysal-sarker.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
