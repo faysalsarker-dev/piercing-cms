@@ -110,7 +110,7 @@ const SalesDetails = () => {
             <div>
               <h2 className="text-lg font-semibold">Transaction Info</h2>
               <p><strong>Total Price:</strong> ৳ {sale?.price}</p>
-              <p><strong>Sold At:</strong> <p><strong>Sold At:</strong> {sale?.soldAt ? format(new Date(sale.soldAt), "EEEE, MMMM d, yyyy") : "N/A"}</p></p>
+              <p><strong>Sold At:</strong> {sale?.soldAt ? format(new Date(sale.soldAt), "EEEE, MMMM d, yyyy") : "N/A"}</p>
             </div>
           </div>
         </CardContent>

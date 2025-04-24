@@ -43,6 +43,7 @@ const navigate = useNavigate()
       setValue("karat", productData.karat);
       setValue("bhori", productData.bhori);
       setValue("ana", productData.ana);
+      setValue("point", productData.point);
       setValue("roti", productData.roti);
       setValue("cost", parseFloat(productData.cost));
       setImagePreview(productData.imageUrl);
@@ -226,7 +227,7 @@ const navigate = useNavigate()
   
       {/* ana */}
       <div className="flex flex-col gap-1">
-        <Label>ana (তোলা)</Label>
+        <Label>Ana (আনা)</Label>
         <Input
           type="number"
           step="any"
@@ -244,6 +245,18 @@ const navigate = useNavigate()
           step="any"
           min="0"
           {...register("roti")}
+          className="h-12 text-base md:text-lg"
+        />
+      </div>
+  
+
+      <div className="flex flex-col gap-1">
+        <Label>Point (পয়েন্ট) *</Label>
+        <Input
+          type="number"
+          step="any"
+          min="0"
+          {...register("point")}
           className="h-12 text-base md:text-lg"
         />
       </div>

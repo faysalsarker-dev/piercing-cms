@@ -207,7 +207,7 @@ export default function AddStock() {
   
       {/* ana */}
       <div className="flex flex-col gap-1">
-        <Label>ana (আনা)</Label>
+        <Label>Ana (আনা)</Label>
         <Input
           type="number"
           step="any"

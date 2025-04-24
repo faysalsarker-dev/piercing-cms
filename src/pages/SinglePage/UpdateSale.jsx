@@ -13,11 +13,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 export default function UpdateSale() {
 
     const {id} = useParams()
+    const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -42,7 +43,6 @@ export default function UpdateSale() {
   })
 
 
-  console.log(saleInfo);
 
   useEffect(() => {
     if (saleInfo) {
@@ -72,6 +72,7 @@ export default function UpdateSale() {
     onSuccess: () =>{
       reset()
       refetch()
+      navigate(`/sales/${id}`)
       toast.success("Sale updated successfully.")},
     onError: () => toast.error("Failed to update sale."),
   })

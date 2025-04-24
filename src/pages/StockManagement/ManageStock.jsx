@@ -139,7 +139,7 @@ const ManageStock = () => {
         <TableHead className="p-3">Category</TableHead>
         <TableHead className="p-3">Weight (g)</TableHead>
         <TableHead className="p-3">Karat</TableHead>
-        <TableHead className="p-3">Stock (B/T/R)</TableHead>
+        <TableHead className="p-3">Stock (B/A/R/P)</TableHead>
         <TableHead className="p-3">Price ($)</TableHead>
         <TableHead className="p-3">Actions</TableHead>
         <TableHead className="p-3">Image</TableHead>
@@ -155,7 +155,7 @@ const ManageStock = () => {
           <TableCell className="p-3">{item?.category}</TableCell>
           <TableCell className="p-3">{item?.weight}(g)</TableCell>
           <TableCell className="p-3">{item?.karat}</TableCell>
-          <TableCell className="p-3">{item?.bhori || ''} B / {item?.ana || 0} T / {item?.roti || 0} R</TableCell>
+          <TableCell className="p-3">{item?.bhori || 0} B / {item?.ana || 0} A / {item?.roti || 0} R / {item?.point || 0} P</TableCell>
           <TableCell className="p-3 font-semibold">${item?.cost}</TableCell>
           <TableCell className="p-3 flex space-x-2 items-center justify-center">
 
