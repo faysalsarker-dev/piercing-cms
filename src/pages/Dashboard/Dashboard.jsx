@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, ShoppingCart, Box, DollarSign, ListOrdered } from "lucide-react";
+import { TrendingUp, ShoppingCart, Box, DollarSign, ListOrdered, Sparkles, Package } from "lucide-react";
 import { BarChart, Bar, CartesianGrid, XAxis } from "recharts";
 import { useState } from "react";
 
@@ -36,8 +36,9 @@ export default function Dashboard() {
   const chartConfig = {
     addedStockCount: { label: "Stock", color: "hsl(var(--chart-1))" },
     soldProductCount: { label: "Sales", color: "hsl(var(--chart-2))" },
+    addedOrderCount: { label: "Orders", color: "hsl(var(--chart-3))" },
+    completedOrderCount: { label: "Order Completed", color: "hsl(var(--chart-4))" },
   };
-
 
 
   
@@ -151,34 +152,63 @@ export default function Dashboard() {
           <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
           <Bar dataKey="addedStockCount" fill="var(--color-addedStockCount)" radius={4} />
           <Bar dataKey="soldProductCount" fill="var(--color-soldProductCount)" radius={4} />
-          <Bar dataKey="addedOrderCount" fill="var(--color-addedStockCount)" radius={4} />
-          <Bar dataKey="completedOrderCount" fill="var(--color-soldProductCount)" radius={4} />
+          <Bar dataKey="addedOrderCount" fill="var(--color-addedOrderCount)" radius={4} />
+          <Bar dataKey="completedOrderCount" fill="var(--color-completedOrderCount)" radius={4} />
         </BarChart>
       </ChartContainer>
     </CardContent>
     <CardFooter className="flex-col items-start gap-2 text-sm">
-{/* Conditional Messages */}
-{data?.totalSalesQuantity > 10 && (
-<div className="flex gap-2 font-medium leading-none text-green-500">
-  <TrendingUp className="h-4 w-4" />
-  <span>Excellent sales performance! Keep up the great work to surpass your targets.</span>
-</div>
-)}
+  {/* Excellent performance */}
+  {data?.totalSoldProductCount > 10 && data?.totalRevenue > 10000 && (
+    <div className="flex gap-2 font-medium leading-none text-green-500">
+      <TrendingUp className="h-4 w-4" />
+      <span>
+        🔥 Excellent month! Sales and revenue are booming. Keep pushing those top products!
+      </span>
+    </div>
+  )}
 
-{data?.totalSalesQuantity <= 10 && data?.totalSalesQuantity > 5 && (
-<div className="flex gap-2 font-medium leading-none text-yellow-500">
-  <ShoppingCart className="h-4 w-4" />
-  <span>Sales are on track! Focus on boosting your top-selling products to achieve your goal.</span>
-</div>
-)}
+  {/* Good sales but room to grow */}
+  {data?.totalSoldProductCount <= 10 && data?.totalSoldProductCount > 5 && (
+    <div className="flex gap-2 font-medium leading-none text-yellow-500">
+      <ShoppingCart className="h-4 w-4" />
+      <span>
+        👍 Sales are steady. Consider optimizing your high-performing items to grow further.
+      </span>
+    </div>
+  )}
 
-{data?.totalSalesQuantity <= 5 && (
-<div className="flex gap-2 font-medium leading-none text-red-500">
-  <Box className="h-4 w-4" />
-  <span>Sales could be better this month. Consider running a promotion to increase sales.</span>
-</div>
-)}
+  {/* Low sales warning */}
+  {data?.totalSoldProductCount <= 5 && (
+    <div className="flex gap-2 font-medium leading-none text-red-500">
+      <Box className="h-4 w-4" />
+      <span>
+        ⚠️ Sales are slower than usual. Try promotions or ads to drive engagement.
+      </span>
+    </div>
+  )}
+
+  {/* Bonus tip based on order volume */}
+  {data?.totalCompletedOrderCount > 15 && (
+    <div className="flex gap-2 font-medium leading-none text-blue-500">
+      <Sparkles className="h-4 w-4" />
+      <span>
+        🎯 Orders are flowing in! Don’t forget to maintain great delivery speed and service.
+      </span>
+    </div>
+  )}
+
+  {/* Stock refill encouragement */}
+  {data?.totalAddedStockCount < 5 && (
+    <div className="flex gap-2 font-medium leading-none text-purple-500">
+      <Package className="h-4 w-4" />
+      <span>
+        📦 Low stock updates this month—add more products to stay competitive!
+      </span>
+    </div>
+  )}
 </CardFooter>
+
 
   </Card>
   )

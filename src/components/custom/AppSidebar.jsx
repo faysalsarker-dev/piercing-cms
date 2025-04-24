@@ -2,17 +2,20 @@ import { LayoutDashboard, PlusCircle, Boxes, ShoppingBag, ShoppingCart, Tags, Ba
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
-import Swal from "sweetalert2";
-import useAuth from "@/hooks/useAuth/useAuth";
+
 import { ScrollArea } from '../ui/scroll-area';
+import logo from '../../assets/logo.png'
+import developer from '../../assets/developer.jpg'
 
 // Menu items.
 const items = [
@@ -67,43 +70,31 @@ const items = [
 
 export function AppSidebar() {
   const location = useLocation();
-const {logOut} = useAuth()
+const {open}=useSidebar()
 
 
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You will be logged out and redirected to the login page.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, log out",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        logOut()
-      }
-    });
-  };
+
+
 
 
 
   return (
     <Sidebar collapsible="icon">
-    <SidebarContent className="flex flex-col h-full">
+    <SidebarContent >
       {/* Header */}
-      <div className="shrink-0">
-        <SidebarGroupLabel collapsible className="text-lg font-bold text-primary mb-3 px-4 pt-4">
-          SHONJIB JEWELLERY
+      <SidebarHeader className="border-b ">
+  <div className="flex items-center gap-3 ">
+    <img src={logo} alt="logo" className="h-10 w-10 rounded-lg" />
 
-         
-        </SidebarGroupLabel>
-        <div className="border-b border-gray-300 mb-1" />
-      </div>
-
+    {/* Hide this div when sidebar is collapsed */}
+{ open &&   <div className="text-left leading-tight ">
+      <h1 className="font-bold text-primary">BONIK JEWELLERS</h1>
+      <p className="text-xs text-gray-500">Shonjib Bonik</p>
+    </div>}
+  </div>
+</SidebarHeader>
       {/* Scrollable Menu Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto my-4">
         <ScrollArea className="h-full">
           <SidebarGroup>
             <SidebarGroupContent>
@@ -142,19 +133,48 @@ const {logOut} = useAuth()
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 border-t border-gray-300 px-4 py-3">
+      <div className="shrink-0 border-t border-gray-300 ">
+      <SidebarFooter className='my-4'>
+
+{
+  open ?
+  
+  
+  <>
+  <a
+              href="https://faysal-sarker.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-base mt-1 mb-2"
+            >
+              Developed by{" "}
+              <span className="text-blue-500 font-bold">Faysal Sarker</span>
+            </a>
+</>
+
+:
+
+<>  
+
+<a 
+
+href="https://faysal-sarker.netlify.app"
+target="_blank"
+rel="noopener noreferrer"
+>
+  <img src={developer} alt="developer" className='h-10 w-10 rounded-lg' />
+  
+</a>
+</>
+}
+
+
+  
+
+
+
+      </SidebarFooter>
        
-        <SidebarGroupLabel collapsible className="flex justify-start p-2 mt-4">
-        <CodeXml />  <a
-            href="https://faysal-sarker.netlify.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-base"
-          >
-            Developed by{" "}
-            <span className="text-blue-500 font-bold">Faysal Sarker</span>
-          </a>
-        </SidebarGroupLabel>
       </div>
     </SidebarContent>
   </Sidebar>

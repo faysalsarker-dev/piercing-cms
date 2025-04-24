@@ -38,20 +38,49 @@ import {
 const chartConfig = {
   totalAddedStock: {
     label: "Stock",
-    color: "hsl(210, 100%, 56%)",
+    color: "hsl(var(--chart-1))",
   },
   totalSoldProduct: {
     label: "Sold",
-    color: "hsl(120, 45%, 53%)",
+    color: "hsl(var(--chart-2))",
+  },
+  totalAddedOrder: {
+    label: "Orders",
+    color: "hsl(var(--chart-3))",
+  },
+  totalCompletedOrder: {
+    label: "Orders Completed",
+    color: "hsl(var(--chart-4))",
   },
 };
 
+
+
+const chartConfigRevenue = {
+  totalRevenue: {
+    label: "Revenue",
+    color: "hsl(var(--chart-1))",
+  },
+dot :{
+  color: "hsl(var(--chart-4))",
+}
+
+};
+
+
+
+
 const categoryColors = [
-  "hsl(210, 100%, 56%)", // সমৃদ্ধ নীল
-  "hsl(200, 80%, 50%)", // ঠান্ডা টিয়াল
-  "hsl(45, 90%, 60%)", // উজ্জ্বল সোনালি হলুদ
-  "hsl(335, 85%, 45%)", // গা dark ় রক্তচোখি লাল
-  "hsl(120, 45%, 53%)", // কোমল সবুজ
+  "hsl(var(--chart-1))", 
+  "hsl(var(--chart-2))", 
+  "hsl(var(--chart-3))", 
+  "hsl(var(--chart-4))", 
+  "hsl(var(--chart-5))",  
+  "hsl(var(--chart-6))",  
+  "hsl(var(--chart-7))",  
+  "hsl(var(--chart-8))",  
+   
+
 ];
 
 export default function ReportAnalytics() {
@@ -99,23 +128,28 @@ export default function ReportAnalytics() {
     cacheTime: 3600000,
   });
 
+
+
+
   const chartConfigPie =
-    categoriesSales?.salesByCategory?.reduce((acc, item, idx) => {
-      acc[item.categoryName] = {
-        label: item.categoryName,
-        color: categoryColors[idx % categoryColors.length], // cycle through colors
+    categoriesSales?.pieChartData?.reduce((acc, item, idx) => {
+      acc[item.category] = {
+        label: item.category,
+        color: categoryColors[idx % categoryColors.length], 
       };
       return acc;
     }, {}) || {};
 
+
+
+
   const formatCurrencyShort = (num) => {
-    if (num >= 1e7) return `৳ ${(num / 1e7).toFixed(1)}Cr`; // Crore
-    if (num >= 1e5) return `৳ ${(num / 1e5).toFixed(1)}L`; // Lakh
-    if (num >= 1e3) return `৳ ${(num / 1e3).toFixed(1)}K`; // Thousand
-    return `৳ ${num?.toLocaleString()}`; // Regular format
+    if (num >= 1e7) return `৳ ${(num / 1e7).toFixed(1)}Cr`; 
+    if (num >= 1e5) return `৳ ${(num / 1e5).toFixed(1)}L`; 
+    if (num >= 1e3) return `৳ ${(num / 1e3).toFixed(1)}K`; 
+    return `৳ ${num?.toLocaleString()}`;
   };
 
-  console.log("pie data", data);
 
   return (
     <div className="p-3 grid gap-6">
@@ -159,12 +193,12 @@ export default function ReportAnalytics() {
                 />
                 <Bar
                   dataKey="totalAddedOrder"
-                  fill="var(--color-totalAddedStock)"
+                  fill="var(--color-totalAddedOrder)"
                   radius={4}
                 />
                 <Bar
                   dataKey="totalCompletedOrder"
-                  fill="var(--color-totalSoldProduct)"
+                  fill="var(--color-totalCompletedOrder)"
                   radius={4}
                 />
               </BarChart>
@@ -371,7 +405,7 @@ export default function ReportAnalytics() {
                 Unable to fetch revenue data.
               </p>
             ) : (
-              <ChartContainer config={chartConfig}>
+              <ChartContainer config={chartConfigRevenue}>
                 <LineChart
                   accessibilityLayer
                   data={chartData?.totalRevenueResult}
@@ -379,7 +413,7 @@ export default function ReportAnalytics() {
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
-                    dataKey="monthName" // Use the month name here
+                    dataKey="monthName" 
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -387,14 +421,14 @@ export default function ReportAnalytics() {
                   />
                   <ChartTooltip
                     cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
+                    content={<ChartTooltipContent  />}
                   />
                   <Line
                     dataKey="totalRevenue"
                     type="monotone"
-                    stroke="var(--color-revenue)"
+                    stroke="var(--color-totalRevenue)"
                     strokeWidth={2}
-                    dot={{ fill: "var(--color-revenue)" }}
+                    dot={{ fill: "var(--color-dot)" }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>
@@ -403,45 +437,30 @@ export default function ReportAnalytics() {
           </CardContent>
 
           <CardFooter className="flex-col items-start gap-2 text-sm">
-            {/* Dynamic message based on the totalRevenueResult */}
-            {chartData?.totalRevenueResult &&
-              chartData.totalRevenueResult.length > 0 && (
-                <>
-                  {chartData.totalRevenueResult.map((monthData, index) => {
-                    // Dynamically adjust based on revenue data for each month
-                    const revenue = monthData.totalRevenue;
+  {chartData?.totalRevenueResult?.length > 0 && (() => {
+    const sorted = [...chartData.totalRevenueResult].sort(
+      (a, b) => b.totalRevenue - a.totalRevenue
+    );
 
-                    // Define dynamic messages
-                    let message = "";
-                    let messageClass = "";
+    const highest = sorted[0];
+    const lowest = sorted[sorted.length - 1];
 
-                    if (revenue < 1000) {
-                      message =
-                        "Sales revenue is low. Consider boosting your marketing efforts.";
-                      messageClass = "text-red-500"; // Low revenue (Red)
-                    } else if (revenue >= 1000 && revenue < 5000) {
-                      message =
-                        "Steady sales performance. Keep up the good work!";
-                      messageClass = "text-yellow-500"; // Medium revenue (Yellow)
-                    } else {
-                      message =
-                        "Excellent revenue growth! You're exceeding expectations!";
-                      messageClass = "text-green-500"; // High revenue (Green)
-                    }
+    return (
+      <>
+        <div className="flex gap-2 font-medium leading-none text-green-500">
+          <span className="font-semibold">{highest.monthName}:</span>
+          <span>had the highest revenue of ${highest.totalRevenue.toLocaleString()}.</span>
+        </div>
+        <div className="flex gap-2 font-medium leading-none text-red-500">
+          <span className="font-semibold">{lowest.monthName}:</span>
+          <span>had the lowest revenue of ${lowest.totalRevenue.toLocaleString()}.</span>
+        </div>
+      </>
+    );
+  })()}
+</CardFooter>
 
-                    return (
-                      <div
-                        key={index}
-                        className={`flex gap-2 font-medium leading-none ${messageClass}`}
-                      >
-                        <span>{monthData.monthName}</span>
-                        <span>{message}</span>
-                      </div>
-                    );
-                  })}
-                </>
-              )}
-          </CardFooter>
+
         </Card>
       </div>
 
@@ -449,6 +468,11 @@ export default function ReportAnalytics() {
         <p className="text-sm text-muted-foreground">
           Loading inventory summary...
         </p>
+      ) : isInventoryError ? (
+   
+  <p className="text-sm text-red-500">
+  Failed to load inventory data.
+</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Sales */}
