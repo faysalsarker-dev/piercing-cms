@@ -63,6 +63,8 @@ export default function AddStock() {
         bhori: variables.get("bhori"),
         ana: variables.get("ana"),
         roti: variables.get("roti"),
+        point: variables.get("point"),
+        karrat: variables.get("karat"),
       });
       reset();
       setImagePreview(null);
@@ -103,6 +105,9 @@ export default function AddStock() {
     onPrintDone={() => setTagData(null)}
   />
 )}
+
+
+
       <Card className="w-full shadow-xl rounded-lg p-6 bg-white">
         <CardHeader>
           <CardTitle className="text-3xl font-semibold text-gray-700">Add New Stock</CardTitle>

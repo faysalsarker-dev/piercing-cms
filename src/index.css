@@ -57,18 +57,16 @@
 
 
 
-
 @media print {
-  @page {
-    size: 38.1mm 25.4mm; /* Set the size to 1.5 inch by 1 inch */
-    margin: 0; /* Remove default margins */
+  body * {
+    visibility: hidden;
   }
-  body {
-    margin: 0; /* Remove margin from the body */
+  #print-section, #print-section * {
+    visibility: visible;
   }
-  .print:block {
-    margin: 0;
-    padding: 0; /* Adjust the padding for the print content */
+  #print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 }
-
