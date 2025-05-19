@@ -24,25 +24,8 @@ import {
 } from "../ui/collapsible";
 
 import { TbLayoutDashboardFilled } from "react-icons/tb";
-import { FaTags } from "react-icons/fa6";
 import { BsFillBarChartFill } from "react-icons/bs";
-import {
-  AiFillBoxPlot, // for Stocks
-
-} from "react-icons/ai";
-import {
-  BsPlusCircle, // for Add Product / Add Order
-  BsFillBoxSeamFill, // for Stock Management
-  BsClipboardCheck, // for Add Order
-  BsGraphUp, // for Order Management
-  BsBagCheckFill, // for Sales Management
-} from "react-icons/bs";
-import { RiShoppingBag3Fill } from "react-icons/ri";
-import { FaClipboardList } from "react-icons/fa";
-import { FaBagShopping } from "react-icons/fa6";
-import { IoMdListBox } from "react-icons/io";
-import { BsDatabaseFillAdd } from "react-icons/bs";
-
+import { AiOutlineUser } from "react-icons/ai";
 
 const topItem =[
   {
@@ -55,10 +38,32 @@ const topItem =[
 const items = [
 
   {
-    title: "Categories",
-    url: "/categories",
-    icon: FaTags,
+    title: "schedules",
+    url: "/schedules",
+    icon: AiOutlineUser,
   },
+  {
+    title: "Blogs",
+    url: "/blog",
+    icon: AiOutlineUser,
+  },
+  {
+    title: "booking",
+    url: "/booking",
+    icon: AiOutlineUser,
+  },
+  {
+    title: "Users",
+    url: "/users",
+    icon: AiOutlineUser,
+  },
+  {
+    title: "Testimonial",
+    url: "/review",
+    icon: AiOutlineUser,
+  },
+
+
   {
     title: "Reports & Analytics",
     url: "/reports",
@@ -67,54 +72,8 @@ const items = [
 ];
 
 const collapsibleItems = [
-  {
-    headTitle: "Stocks",
-    icon: AiFillBoxPlot,
-    items: [
-      {
-        title: "Add Product",
-        url: "/stock-management/add-product",
-        icon: BsDatabaseFillAdd,
-      },
-      {
-        title: "Stock Management",
-        url: "/stock-management",
-        icon: IoMdListBox,
-      },
-    ],
-  },
-  {
-    headTitle: "Orders",
-    icon: FaClipboardList,
-    items: [
-      {
-        title: "Add Order",
-        url: "/add-order",
-        icon: BsClipboardCheck,
-      },
-      {
-        title: "Order Management",
-        url: "/manage-orders",
-        icon: BsGraphUp,
-      },
-    ],
-  },
-  {
-    headTitle: "Sales",
-    icon: FaBagShopping,
-    items: [
-      {
-        title: "Sales Products",
-        url: "/sale-management/add-sales",
-        icon: RiShoppingBag3Fill,
-      },
-      {
-        title: "Sales Management",
-        url: "/sale-management",
-        icon: BsBagCheckFill,
-      },
-    ],
-  },
+ 
+ 
 ];
 
 export function AppSidebar() {

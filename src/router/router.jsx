@@ -1,101 +1,69 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../pages/layout/Layout";
-import Dashboard from "@/pages/Dashboard/Dashboard";
-import StockManagement from "@/pages/StockManagement/StockManagement";
-import AddStock from "@/pages/StockManagement/AddStock";
-import Categories from "@/pages/categories/Categories";
-import SalesManagement from "@/pages/salesManagement/SalesManagement";
-import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
-import AddNewSale from "@/pages/salesManagement/AddNewSale";
-import SalesDetails from "@/pages/SinglePage/SalesDetails";
-import ProductDetails from "@/pages/SinglePage/ProductDetails";
-import Login from "@/pages/Auth/Login";
-import Protector from "./Protector";
-import UpdateSale from "@/pages/SinglePage/UpdateSale";
-import UpdateStock from "@/pages/SinglePage/UpdateStock";
-import AddOrder from "@/pages/Orders/AddOrder";
-import ManageOrders from "@/pages/Orders/ManageOrders";
-import OrderDetailsPage from "@/pages/Orders/OrderDetailsPage";
-import UpdateOrder from "@/pages/Orders/UpdateOrder";
 
+import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
+
+import Login from "@/pages/Auth/Login";
+
+import Home from "./../pages/home/Home";
+import Users from "@/pages/Users/Users";
+import ClientReview from "@/pages/Review/ClientReview";
+import BlogPost from "@/pages/Blogs/BlogPost";
+import Schedule from "@/pages/Schedule/Schedule";
+import RegisterUser from "@/pages/Users/RegisterUser";
+import BookingPage from "@/pages/OnlineBook/BookingPage";
+import UploadMediaPage from "@/pages/Gallery/UploadMediaPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element:<Protector><Layout/></Protector> ,
+    element: <Layout />,
     errorElement: <h3>error page</h3>,
     children: [
-        {
-            index:true,
-            element:<Dashboard/>
-        },
-        {
-            path:'/stock-management',
-            element:<StockManagement/>
-        },
-        {
-            path:'/stock-management/add-product',
-            element:<AddStock/>
-        },
-        {
-            path:'/categories',
-            element:<Categories/>
-        },
-        {
-          path:'/sale-management',
-          element:<SalesManagement/>
+      {
+        index: true,
+        element: <Home/>
       },
-        {
-          path:'/sale-management/add-sales',
-          element:<AddNewSale/>
+
+      {
+        path: "/schedules",
+        element: <Schedule />,
       },
-        {
-          path:'/reports',
-          element:<ReportAnalytics/>
+      {
+        path: "/blog",
+        element: <BlogPost />,
       },
-        {
-          path:'/sales/:id',
-          element:<SalesDetails/>
+
+      {
+        path: "/users",
+        element: <Users />,
       },
-        {
-          path:'/product/:id',
-          element:<ProductDetails/>
+      {
+        path: "/booking",
+        element: <BookingPage />,
       },
-        {
-          path:'/sale-management/:id',
-          element:<UpdateSale/>
+      {
+        path: "/upload-media",
+        element: <UploadMediaPage />,
       },
-        {
-          path:'/stock-management/:id',
-          element:<UpdateStock/>
+      {
+        path: "/users/register",
+        element: <RegisterUser />,
       },
-        {
-          path:'/stock-management/:id',
-          element:<UpdateStock/>
+      {
+        path: "/review",
+        element: <ClientReview />,
       },
-        {
-          path:'/add-order',
-          element:<AddOrder/>
+      {
+        path: "/reports",
+        element: <ReportAnalytics />,
       },
-        {
-          path:'/manage-orders',
-          element:<ManageOrders/>
-      },
-        {
-          path:'/orders-details/:id',
-          element:<OrderDetailsPage/>
-      },
-        {
-          path:'/update-orders/:id',
-          element:<UpdateOrder/>
-      },
-    
     ],
   },
   {
-    path:'/login',
-    element:<Login/>
-},
+    path: "/login",
+    element: <Login />,
+  },
 ]);
 
 export default router;

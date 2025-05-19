@@ -10,7 +10,7 @@ const Layout = () => {
       <AppSidebar />
       <main className='w-full bg-background'>
 <TopBar/> 
-     <Outlet/>
+     <div className='px-4'><Outlet/></div>
       </main>
     </SidebarProvider>
   );
