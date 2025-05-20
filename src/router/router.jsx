@@ -13,6 +13,9 @@ import Schedule from "@/pages/Schedule/Schedule";
 import RegisterUser from "@/pages/Users/RegisterUser";
 import BookingPage from "@/pages/OnlineBook/BookingPage";
 import UploadMediaPage from "@/pages/Gallery/UploadMediaPage";
+import Gallery from "@/pages/Gallery/Gallery";
+import PriceListPage from "@/pages/PriceList/PriceListPage";
+import BlogListPage from "@/pages/Blogs/BlogListPage";
 
 const router = createBrowserRouter([
   {
@@ -47,8 +50,20 @@ const router = createBrowserRouter([
         element: <UploadMediaPage />,
       },
       {
+        path: "/gallery",
+        element: <Gallery />,
+      },
+      {
         path: "/users/register",
         element: <RegisterUser />,
+      },
+      {
+        path: "/price-list",
+        element: <PriceListPage />,
+      },
+      {
+        path: "/blog-list",
+        element: <BlogListPage />,
       },
       {
         path: "/review",

@@ -48,6 +48,16 @@ const items = [
     icon: AiOutlineUser,
   },
   {
+    title: "gallery",
+    url: "/gallery",
+    icon: AiOutlineUser,
+  },
+  {
+    title: "price-list",
+    url: "/price-list",
+    icon: AiOutlineUser,
+  },
+  {
     title: "booking",
     url: "/booking",
     icon: AiOutlineUser,
