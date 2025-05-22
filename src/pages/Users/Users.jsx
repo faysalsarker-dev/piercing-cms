@@ -1,78 +1,184 @@
-// .jsx
-import  { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import useAxios from "@/hooks/useAxios";
+import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Badge } from "@/components/ui/badge";
 
-const fakeUsers = [
-  { id: 1, name: "Faysal Sarker", email: "faysal@example.com", role: "admin" },
-  { id: 2, name: "Tanvir Hossain", email: "tanvir@example.com", role: "editor" },
-  { id: 3, name: "Nusrat Jahan", email: "nusrat@example.com", role: "viewer" },
-  { id: 4, name: "Mehedi Hasan", email: "mehedi@example.com", role: "editor" },
-];
 
-const roleColors = {
-  admin: "bg-red-500 text-white",
-  editor: "bg-blue-500 text-white",
-  viewer: "bg-gray-500 text-white",
-};
 
-const Users = () => {
-  const [users, setUsers] = useState(fakeUsers);
+export default function Users() {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [openDiolog, setOpenDiolog] = useState(false);
 
-  const handleRoleChange = (id, newRole) => {
-    const updatedUsers = users.map((user) =>
-      user.id === id ? { ...user, role: newRole } : user
-    );
-    setUsers(updatedUsers);
+
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const axiosCommon = useAxios();
+
+  const { data: users = [], isLoading, refetch } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await axiosCommon.get("/users");
+      return res.data;
+    },
+  });
+
+
+const { mutate } = useMutation({
+    mutationFn: async (formData) => {
+      const res = await axiosCommon.put(`/users/${formData.uid}`, formData);
+      return res.data;
+    },
+    onSuccess: () => {
+      refetch()
+      toast.success("User Update successfully!");
+   setOpenDiolog(false)
+    },
+    onError: (error) => {
+      console.error(error.massage);
+      toast.error("User registration failed.");
+    },
+  });
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setOpenDiolog(true);
+  };
+
+  const handleRoleChange = (newRole) => {
+    setSelectedUser((prev) => ({ ...prev, role: newRole }));
+  };
+
+  const handleSubmit = () => {
+    console.log(selectedUser);
+   mutate(selectedUser);
   };
 
   return (
-    <Card className="p-4 mt-6 mx-auto w-full shadow-xl rounded-2xl ">
-      <h2 className="text-2xl font-semibold mb-4 text-center">User Management</h2>
-      <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="text-center">Change Role</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Badge className={roleColors[user.role] || "bg-gray-300"}>
-                    {user.role}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Select
-                    value={user.role}
-                    onValueChange={(value) => handleRoleChange(user.id, value)}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="editor">Editor</SelectItem>
-                      <SelectItem value="viewer">Viewer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-};
+    <div className="p-6">
+   <div className="flex justify-between items-center">   <h2 className="text-2xl font-bold mb-6">User Management</h2>
+ <Link to='/users/register'>  <Button className='bg-primary'>Add New User</Button></Link>
+   </div>
 
-export default Users;
+      <Table>
+        <TableHeader className='bg-gray-300'>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className='bg-white'>
+          {users.map((user) => (
+            <TableRow key={user._id}>
+              <TableCell>{user.displayName}</TableCell>
+              <TableCell>{user.email}</TableCell>
+          <TableCell>
+  <Badge
+    className={`capitalize px-3 py-1 rounded-lg
+      ${user.role === "admin" 
+        ? "bg-green-100 text-green-800 border border-green-400"
+        : "bg-gray-100 text-gray-800 border border-gray-400"}`}
+  >
+    {user.role}
+  </Badge>
+</TableCell>
+
+              <TableCell className="flex justify-end gap-2">
+                <Button size="icon" variant="ghost" onClick={() => handleEditClick(user)}>
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button
+                     onClick={() => {
+                          setDeleteId(user?.uid);
+                          setOpen(true);
+                        }}
+                
+                size="icon" variant="ghost" className="text-red-500">
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Dialog for Role Update */}
+      <Dialog open={openDiolog} onOpenChange={setOpenDiolog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit User Role</DialogTitle>
+          </DialogHeader>
+
+          {selectedUser && (
+            <div className="space-y-4">
+              <div>
+                <p><strong>Name:</strong> {selectedUser.displayName}</p>
+                <p><strong>Email:</strong> {selectedUser.email}</p>
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm font-medium">Role</label>
+                <Select value={selectedUser.role} onValueChange={handleRoleChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="editor">Editor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <DialogFooter>
+                <Button onClick={handleSubmit} >
+                  update
+                  {/* {mutation.isLoading ? "Updating..." : "Update Role"} */}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+
+
+     <DeleteConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        id={deleteId}
+        url="/users"
+        refetch={refetch}
+      />
+
+    </div>
+  );
+}

@@ -121,7 +121,7 @@ console.log(dateRange,'date rangee');
       <h1 className="text-3xl font-bold text-center">Online Booking Management</h1>
 
       {/* Filter Form */}
-      <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end ">
         <div>
           <label htmlFor="search" className="block mb-1 font-medium">
             Search (Name or Phone)
@@ -131,19 +131,22 @@ console.log(dateRange,'date rangee');
             placeholder="Search by name or phone"
             defaultValue=""
             {...register('search')}
+            className='bg-white'
           />
         </div>
 
-        <div>
+        <div >
           <label htmlFor="sort" className="block mb-1 font-medium">Sort By</label>
           <Select
             defaultValue="newest"
+            className='bg-white'
             onValueChange={(val) => {
               setValue('sort', val);
               setPage(1);
+
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className='bg-white'>
               <SelectValue placeholder="Select sort" />
             </SelectTrigger>
             <SelectContent>
@@ -157,12 +160,13 @@ console.log(dateRange,'date rangee');
           <label htmlFor="status" className="block mb-1 font-medium">Status</label>
           <Select
             defaultValue="all"
+            className='bg-white'
             onValueChange={(val) => {
               setValue('status', val);
               setPage(1);
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className='bg-white'>
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>

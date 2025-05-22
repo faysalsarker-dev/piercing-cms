@@ -102,6 +102,7 @@ export default function CreatePriceListDialog() {
     if (data.image?.[0]) {
       formData.append("image", data.image[0]);
     }
+    console.log(formData,'formData');
     mutation.mutate(formData);
   };
 

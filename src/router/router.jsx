@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../pages/layout/Layout";
 
-import ReportAnalytics from "@/pages/Analytics/ReportAnalytics";
 
 import Login from "@/pages/Auth/Login";
 
@@ -16,16 +15,22 @@ import UploadMediaPage from "@/pages/Gallery/UploadMediaPage";
 import Gallery from "@/pages/Gallery/Gallery";
 import PriceListPage from "@/pages/PriceList/PriceListPage";
 import BlogListPage from "@/pages/Blogs/BlogListPage";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import Protector from "./Protector";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <Protector><Layout /></Protector>,
     errorElement: <h3>error page</h3>,
     children: [
       {
         index: true,
-        element: <Home/>
+        element: <Dashboard/>
+      },
+      {
+        path: "/overview",
+        element:<Home/>
       },
 
       {
@@ -69,10 +74,7 @@ const router = createBrowserRouter([
         path: "/review",
         element: <ClientReview />,
       },
-      {
-        path: "/reports",
-        element: <ReportAnalytics />,
-      },
+     
     ],
   },
   {

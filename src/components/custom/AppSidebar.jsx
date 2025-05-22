@@ -17,74 +17,63 @@ import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import logo from "../../assets/logo.png";
 import developer from "../../assets/developer.jpg";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
 
-import { TbLayoutDashboardFilled } from "react-icons/tb";
-import { BsFillBarChartFill } from "react-icons/bs";
-import { AiOutlineUser } from "react-icons/ai";
 
-const topItem =[
+
+import { FaStackOverflow } from "react-icons/fa";
+import { AiOutlineCalendar, AiOutlineFileText, AiOutlinePicture, AiOutlineDollarCircle, AiOutlineBook, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { MdOutlineReviews ,MdOutlineTableView } from "react-icons/md";
+
+const items = [
   {
     title: "Dashboard",
     url: "/",
-    icon: TbLayoutDashboardFilled,
-  }
-]
-// Menu items.
-const items = [
-
+    icon: FaStackOverflow ,
+  },
   {
-    title: "schedules",
+    title: "Overview",
+    url: "/overview",
+    icon: MdOutlineTableView ,
+  },
+  {
+    title: "Schedules",
     url: "/schedules",
-    icon: AiOutlineUser,
+    icon: AiOutlineCalendar,
   },
   {
     title: "Blogs",
     url: "/blog",
-    icon: AiOutlineUser,
+    icon: AiOutlineFileText,
   },
   {
-    title: "gallery",
+    title: "Gallery",
     url: "/gallery",
-    icon: AiOutlineUser,
+    icon: AiOutlinePicture,
   },
   {
-    title: "price-list",
+    title: "Price List",
     url: "/price-list",
-    icon: AiOutlineUser,
+    icon: AiOutlineDollarCircle,
   },
   {
-    title: "booking",
+    title: "Booking",
     url: "/booking",
-    icon: AiOutlineUser,
+    icon: AiOutlineBook,
   },
   {
     title: "Users",
     url: "/users",
-    icon: AiOutlineUser,
+    icon: AiOutlineUsergroupAdd,
   },
   {
-    title: "Testimonial",
+    title: "Testimonials",
     url: "/review",
-    icon: AiOutlineUser,
-  },
-
-
-  {
-    title: "Reports & Analytics",
-    url: "/reports",
-    icon: BsFillBarChartFill,
+    icon: MdOutlineReviews,
   },
 ];
 
-const collapsibleItems = [
- 
- 
-];
+
+
 
 export function AppSidebar() {
   const location = useLocation();
@@ -101,8 +90,8 @@ export function AppSidebar() {
             {/* Hide this div when sidebar is collapsed */}
             {open && (
               <div className="text-left leading-tight ">
-                <h1 className="font-bold text-primary">BONIK JEWELLERS</h1>
-                <p className="text-xs text-gray-500">Shonjib Bonik</p>
+                <h1 className="font-bold text-primary">WEB MANAGEMENT</h1>
+                <p className="text-xs text-gray-500">Kc</p>
               </div>
             )}
           </div>
@@ -114,112 +103,13 @@ export function AppSidebar() {
               <SidebarGroupContent>
 
 
-              <SidebarMenu>
-                  {topItem.map((item) => {
-                    const isActive = location.pathname === item.url;
-                    return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          size="lg"
-                          className={`${
-                            isActive
-                              ? "bg-orange-100 text-primary font-extrabold"
-                              : "text-gray-700 hover:bg-gray-200"
-                          }`}
-                          asChild
-                        >
-                          <Link to={item.url}>
-                            <item.icon
-                              size={10}
-                              color="currentColor"
-                             
-                            />
-                            <span
-                              className={`${
-                                isActive ? "font-bold" : "font-medium"
-                              }`}
-                            >
-                              {item.title}
-                            </span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
 
 
 
 
 
 
-              <SidebarMenu>
-
-
-
-
-
-
-
-                  {collapsibleItems.map((section, index) => (
-                    <Collapsible
-                      key={index}
-                      className="group/collapsible"
-                      defaultOpen={false}
-                    >
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                          <SidebarMenuButton
-                            size="lg"
-                            className={`${
-                         
-                                "text-gray-700 hover:bg-gray-200"
-                            }`}
-                          >
-                            <section.icon className="mr-2" size={10} />
-                            <span className="text-sm font-medium">  
-                            {section.headTitle || section.title}
-                            </span>
-                          </SidebarMenuButton>
-                        </CollapsibleTrigger>
-
-                        <CollapsibleContent className="pl-4 mt-1 flex flex-col gap-1">
-                          {section.items.map((item, idx) => {
-                            const isActive = location.pathname === item.url;
-
-                            return (
-                              <SidebarMenuSubItem key={idx}>
-                                <SidebarMenuButton
-                                  asChild
-                                  className={`rounded-md px-3 py-2 flex items-center gap-2 ${
-                                    isActive
-                                      ? "bg-orange-100 text-primary font-extrabold"
-                                      : "text-gray-700 hover:bg-gray-200"
-                                  }`}
-                                >
-                                  <Link to={item.url}>
-                                    <item.icon
-                                      size={16}
-                                      color="currentColor"
-                                    
-                                    />
-                                    <span
-                                      className={
-                                        isActive ? "font-bold" : "font-medium"
-                                      }
-                                    >
-                                      {item.title}
-                                    </span>
-                                  </Link>
-                                </SidebarMenuButton>
-                              </SidebarMenuSubItem>
-                            );
-                          })}
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
-                  ))}
-                </SidebarMenu>
+            
 
 
                 <SidebarMenu>
@@ -231,7 +121,7 @@ export function AppSidebar() {
                           size="lg"
                           className={`${
                             isActive
-                              ? "bg-orange-100 text-primary font-extrabold"
+                              ? "bg-primary text-white font-extrabold"
                               : "text-gray-700 hover:bg-gray-200"
                           }`}
                           asChild

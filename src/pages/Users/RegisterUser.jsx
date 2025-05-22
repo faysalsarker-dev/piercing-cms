@@ -13,6 +13,7 @@ import {
 import useAxios from "@/hooks/useAxios";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterUser() {
   const {
@@ -24,7 +25,7 @@ export default function RegisterUser() {
   } = useForm();
 
   const axiosCommon = useAxios();
-
+const navigate = useNavigate()
   const { mutate, isLoading } = useMutation({
     mutationFn: async (formData) => {
       const res = await axiosCommon.post("/users", formData);
@@ -32,7 +33,8 @@ export default function RegisterUser() {
     },
     onSuccess: () => {
       toast.success("User registered successfully!");
-      reset(); // Clear the form
+      reset(); 
+      navigate(-1)
     },
     onError: (error) => {
       console.error(error);
@@ -54,14 +56,14 @@ export default function RegisterUser() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Name */}
           <div>
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="displayName">Full Name</Label>
             <Input
-              id="name"
+              id="displayName"
               placeholder="Enter full name"
-              {...register("name", { required: "Name is required" })}
+              {...register("displayName", { required: "Name is required" })}
               className="mt-1"
             />
-            {errors.name && (
+            {errors.displayName && (
               <p className="text-sm text-red-500 mt-1">
                 {errors.name.message}
               </p>
@@ -145,10 +147,10 @@ export default function RegisterUser() {
 
           <Button
             type="submit"
-            className="w-full"
-            disabled={isSubmitting || isLoading}
+            className="w-full bg-primary"
+            disabled={isLoading}
           >
-            {isSubmitting || isLoading ? "Registering..." : "Register User"}
+            {isLoading ? "Registering..." : "Register User"}
           </Button>
         </form>
       </div>

@@ -1,19 +1,42 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil, Trash2 } from "lucide-react";
 import useAxios from "@/hooks/useAxios";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 
 export default function PriceListTable() {
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
-    
-         const [open, setOpen] = useState(false);
-      const [deleteId, setDeleteId] = useState(null);
-const axiosCommon = useAxios()
-  const { data: priceList = [], isLoading,refetch } = useQuery({
+  const axiosCommon = useAxios();
+
+  const { data: priceList = [], isLoading, refetch } = useQuery({
     queryKey: ["pricelist"],
     queryFn: async () => {
       const res = await axiosCommon.get("/price");
@@ -21,15 +44,11 @@ const axiosCommon = useAxios()
     },
   });
 
-
-
-
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Price List</h2>
-
-        <Select  defaultValue="all">
+    <Card className="w-full shadow-md">
+      <CardHeader className="flex flex-row justify-between items-center">
+        <CardTitle>Price List</CardTitle>
+        <Select defaultValue="all">
           <SelectTrigger className="w-[250px]">
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
@@ -40,81 +59,91 @@ const axiosCommon = useAxios()
             <SelectItem value="microlidding">Microlidding</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </CardHeader>
 
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="overflow-x-auto border rounded-md">
-          <table className="min-w-full text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="p-3">Image</th>
-                <th className="p-3">Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Regular Price</th>
-                <th className="p-3">Discounted Price</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {priceList?.map((item) => (
-                <tr key={item?._id} className="border-t hover:bg-gray-50">
-                  <td className="p-3">
-                    {item?.image ? (
-                      <img src={item?.image} alt="thumb" className="w-14 h-14 object-cover rounded-md" />
-                    ) : (
-                      <span className="text-gray-400 italic">No image</span>
-                    )}
-                  </td>
-                  <td className="p-3 font-medium">{item?.title}</td>
-                  <td className="p-3 capitalize">{item?.category}</td>
-                  <td className="p-3 text-red-500 font-semibold">{item?.regularPrice}</td>
-                  <td className="p-3 text-green-600 font-semibold">{item?.discountedPrice}</td>
-                  <td className="p-3 flex gap-3">
-                    <Button size="sm" variant="outline" onClick={() => toast("Open edit dialog")}>
-                      <Pencil size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
+      <CardContent>
+        {isLoading ? (
+          <p className="text-center py-6">Loading...</p>
+        ) : (
+          <div className="overflow-x-auto border rounded-md">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Web</TableHead>
+                  <TableHead>Regular Price</TableHead>
+                  <TableHead>Discounted Price</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {priceList.map((item) => (
+                  <TableRow key={item?._id}>
+                    <TableCell>
+                      {item?.image ? (
+                        <img
+                          src={item.image}
+                          alt="thumb"
+                          className="w-14 h-14 object-cover rounded-md"
+                        />
+                      ) : (
+                        <span className="text-muted-foreground italic">
+                          No image
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="font-medium">{item?.title}</TableCell>
+                    <TableCell className="capitalize">{item?.category}</TableCell>
+                    <TableCell className="capitalize">{item?.web}</TableCell>
+                    <TableCell className="text-red-500 font-semibold">
+                      {item?.regularPrice}
+                    </TableCell>
+                    <TableCell className="text-green-600 font-semibold">
+                      {item?.discountedPrice}
+                    </TableCell>
+                    <TableCell className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => toast("Open edit dialog")}
+                      >
+                        <Pencil size={16} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
                         onClick={() => {
-                setDeleteId(item?._id);
-                setOpen(true);
-              }}
-                     
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {priceList?.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="p-4 text-center text-gray-500">
-                    No items in this category.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                          setDeleteId(item?._id);
+                          setOpen(true);
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {priceList.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                      No items in this category.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
 
-    <DeleteConfirmDialog
-      
-      
-      open={open}
-          onClose={() => setOpen(false)}
-          id={deleteId}
-          url={`/price`}
+      <DeleteConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        id={deleteId}
+        url="/price"
         refetch={refetch}
-      
       />
-
-
-
-
-    </div>
+    </Card>
   );
 }

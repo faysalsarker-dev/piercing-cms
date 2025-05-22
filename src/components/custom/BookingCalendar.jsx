@@ -12,22 +12,22 @@ import { Skeleton } from "../ui/skeleton";
 const BookingCalendar = ({handleEventClick}) => {
   const axiosCommon = useAxios();
 
-const [currentMonth, setCurrentMonth] = useState(new Date());
+// Always correct today’s full date
+const [currentDate, setCurrentDate] = useState(format(new Date(), "yyyy-MM-dd"));
+console.log('formatted',currentDate );
 
-console.log('formatted', format(currentMonth, "EEEE, MMMM d, yyyy"));
 
 
-
-const today = new Date();
-console.log(format(today, "EEEE, MMMM d, yyyy"),'today');
+// const today = new Date();
+// console.log(format(today, "yyyy-MM-dd"),'today');
 
 
 
 
   const { data, isLoading } = useQuery({
-    queryKey: ["calendar-summary", currentMonth],
+    queryKey: ["calendar-summary", currentDate],
     queryFn: async () => {
-      const res = await axiosCommon.get(`/summaries?month=2025-05`);
+      const res = await axiosCommon.get(`/summaries?date=${currentDate}`);
       return res.data;
     },
   });
@@ -46,11 +46,17 @@ console.log(format(today, "EEEE, MMMM d, yyyy"),'today');
   })) || [];
 
 
-  const handleMonthChange = (info) => {
-    const month = format(info.start, "yyyy-MM");
-    setCurrentMonth(month);
+  // const handleMonthChange = (info) => {
+  //   const month = format(info.start, "yyyy-MM-dd");
+  //   setCurrentDate(month);
   
-  };
+  // };
+
+const handleMonthChange = (selectedDate) => {
+  // console.log(format(new Date(selectedDate.start), "yyyy-MM-dd"));
+  // setCurrentDate(format(new Date(selectedDate.start), "yyyy-MM-dd"));
+};
+
 
   const eventDates = new Set(
     events.map((event) => format(new Date(event.date), "yyyy-MM-dd"))
@@ -62,7 +68,7 @@ console.log(format(today, "EEEE, MMMM d, yyyy"),'today');
 
         info.el.style.backgroundColor = '#d1fae5'; 
       } else {
-        info.el.style.backgroundColor = '#f3f4f6'; 
+        info.el.style.backgroundColor = '#ffffff'; 
       }
     }
   

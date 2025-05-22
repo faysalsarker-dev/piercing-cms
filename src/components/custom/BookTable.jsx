@@ -92,17 +92,17 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No bookings found.</p>
+          <p className="text-center ">No bookings found.</p>
         )}
       </div>
 
       {/* Desktop View */}
-      <div className="hidden md:block overflow-x-auto rounded-md border border-gray-200 shadow-sm">
+      <div className="hidden bg-white md:block overflow-x-auto rounded-md border border-gray-200 shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
               {["Name", "Phone", "Email", "Service", "Price", "Booking Date", "Slot", "Status", "Edit"].map((head) => (
-                <TableHead key={head}>{head}</TableHead>
+                <TableHead className='bg-gray-200' key={head}>{head}</TableHead>
               ))}
             </TableRow>
           </TableHeader>

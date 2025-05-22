@@ -218,7 +218,7 @@ const onDayCellDidMount=(info) => {
       info.el.style.backgroundColor = '#d1fae5'; // Tailwind's green-100
     } else {
       // Apply gray background for non-event dates
-      info.el.style.backgroundColor = '#f3f4f6'; // Tailwind's gray-100
+      info.el.style.backgroundColor = '#ffffff'; // Tailwind's gray-100
     }
   }
 

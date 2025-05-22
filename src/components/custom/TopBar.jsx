@@ -39,7 +39,7 @@ export default function TopBar() {
 
 
   return (
-    <div className="bg-sidebar p-4 shadow-md flex items-center justify-between rounded-lg gap-4 flex-wrap">
+    <div className="bg-sidebar p-4 shadow-md flex items-center justify-between  gap-4 flex-wrap">
       {/* Sidebar Toggle */}
       <SidebarTrigger />
 
