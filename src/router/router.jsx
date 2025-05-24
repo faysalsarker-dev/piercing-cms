@@ -7,7 +7,6 @@ import Login from "@/pages/Auth/Login";
 import Home from "./../pages/home/Home";
 import Users from "@/pages/Users/Users";
 import ClientReview from "@/pages/Review/ClientReview";
-import BlogPost from "@/pages/Blogs/BlogPost";
 import Schedule from "@/pages/Schedule/Schedule";
 import RegisterUser from "@/pages/Users/RegisterUser";
 import BookingPage from "@/pages/OnlineBook/BookingPage";
@@ -17,6 +16,8 @@ import PriceListPage from "@/pages/PriceList/PriceListPage";
 import BlogListPage from "@/pages/Blogs/BlogListPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import Protector from "./Protector";
+import OfferBanner from "@/pages/offerBanner/OfferBanner";
+
 
 const router = createBrowserRouter([
   {
@@ -37,10 +38,7 @@ const router = createBrowserRouter([
         path: "/schedules",
         element: <Schedule />,
       },
-      {
-        path: "/blog",
-        element: <BlogPost />,
-      },
+   
 
       {
         path: "/users",
@@ -70,10 +68,15 @@ const router = createBrowserRouter([
         path: "/blog-list",
         element: <BlogListPage />,
       },
+   {
+path: "/offer-banner",
+element:<OfferBanner/>
+   },
       {
         path: "/review",
         element: <ClientReview />,
       },
+  
      
     ],
   },

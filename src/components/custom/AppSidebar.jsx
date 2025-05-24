@@ -61,6 +61,11 @@ const items = [
     icon: AiOutlineBook,
   },
   {
+    title: "Offers",
+    url: "/offer-banner",
+    icon: AiOutlineBook,
+  },
+  {
     title: "Users",
     url: "/users",
     icon: AiOutlineUsergroupAdd,
