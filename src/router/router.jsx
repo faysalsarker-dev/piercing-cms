@@ -17,6 +17,8 @@ import BlogListPage from "@/pages/Blogs/BlogListPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import Protector from "./Protector";
 import OfferBanner from "@/pages/offerBanner/OfferBanner";
+import BlogCreatePage from "@/pages/Blogs/BlogCreatePage";
+import UpdateBlogPost from "@/pages/Blogs/UpdateBlogPost";
 
 
 const router = createBrowserRouter([
@@ -65,8 +67,16 @@ const router = createBrowserRouter([
         element: <PriceListPage />,
       },
       {
-        path: "/blog-list",
+        path: "/blogs-list",
         element: <BlogListPage />,
+      },
+      {
+        path: "/blog-post",
+        element: <BlogCreatePage />,
+      },
+      {
+        path: "/blogs-update/:slug",
+        element: <UpdateBlogPost/>,
       },
    {
 path: "/offer-banner",

@@ -45,7 +45,7 @@ const formats = [
 
 export default function RichTextEditor({ value, onChange }) {
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className=" mx-auto p-6">
       <div className="my-8 h-48">
         <ReactQuill
           className="h-full"

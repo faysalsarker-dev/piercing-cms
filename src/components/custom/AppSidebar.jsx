@@ -9,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
@@ -42,7 +41,7 @@ const items = [
   },
   {
     title: "Blogs",
-    url: "/blog",
+    url: "/blogs-list",
     icon: AiOutlineFileText,
   },
   {

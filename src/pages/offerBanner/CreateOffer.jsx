@@ -97,7 +97,6 @@ export default function CreateOffer({ open, setOpen,refetch }) {
         formData.append(`displayOn[${idx}]`, path);
       }
     });
-console.log(data);
     mutate(formData);
   };
 

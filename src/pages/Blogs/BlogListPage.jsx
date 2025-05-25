@@ -1,14 +1,30 @@
-import { useQuery, } from "@tanstack/react-query";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import useAxios from "@/hooks/useAxios";
+import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 
 export default function BlogListPage() {
+  const axiosCommon = useAxios();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
-  const axiosCommon = useAxios()
-  const { data: blogs = [], isLoading } = useQuery({
+  const {
+    data: blogs = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
       const res = await axiosCommon.get("/blogs");
@@ -16,54 +32,86 @@ export default function BlogListPage() {
     },
   });
 
-
-
-
   return (
-    <Card className="p-4 overflow-auto">
-      <h2 className="text-xl font-semibold mb-4">All Blogs</h2>
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">All Blogs</h2>
+        <Button onClick={() => navigate("/blog-post")} className="bg-primary hover:bg-blue-600 text-white">
+          + Create New Blog
+        </Button>
+      </div>
 
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : blogs.length === 0 ? (
-        <p>No blogs found.</p>
-      ) : (
-        <table className="min-w-full border text-sm">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="p-3 border">#</th>
-              <th className="p-3 border">Title</th>
-              <th className="p-3 border">Published</th>
-              <th className="p-3 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {blogs.map((blog, index) => (
-              <tr key={blog._id} className="hover:bg-gray-50 transition">
-                <td className="p-3 border">{index + 1}</td>
-                <td className="p-3 border">{blog.title}</td>
-                <td className="p-3 border">{blog.createAt || "N/A"}</td>
-                <td className="p-3 border flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    title="Edit"
-                  >
-                    <FiEdit className="text-blue-600" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    title="Delete"
-                  >
-                    <FiTrash2 className="text-red-600" />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </Card>
+      <div className="rounded-md border shadow-sm overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-300 text-black hover:bg-primary">
+              <TableHead>Image</TableHead>
+              <TableHead >Title</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center py-6">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : blogs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center py-6 text-gray-500">
+                  No blogs found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              blogs.map((blog) => (
+                <TableRow className="bg-white" key={blog._id}>
+                  <TableCell >
+                    {blog.image ? (
+                      <img
+                        src={`${import.meta.env.VITE_API}/images/${blog.image}`}
+                        alt={blog.title}
+                        className="w-20 h-14 object-cover rounded-md"
+                      />
+                    ) : (
+                      <span className="text-muted-foreground italic">No Image</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">{blog.title}</TableCell>
+                  <TableCell className="text-center space-x-2">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => navigate(`/blogs-update/${blog.slug}`)}
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => {
+                        setDeleteId(blog.slug);
+                        setOpen(true);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        id={deleteId}
+        url="/blogs"
+        refetch={refetch}
+      />
+    </div>
   );
 }
