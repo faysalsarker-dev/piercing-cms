@@ -64,7 +64,7 @@ export default function BlogListPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              blogs.map((blog) => (
+              blogs?.blogs?.map((blog) => (
                 <TableRow className="bg-white" key={blog._id}>
                   <TableCell >
                     {blog.image ? (

@@ -138,7 +138,7 @@ export default function CreatePriceListDialog() {
                   type="number"
                   id="regularPrice"
                   {...register("regularPrice", {
-                    required: "Regular price is required",
+                   
                     min: { value: 0, message: "Must be positive" },
                   })}
                   placeholder="e.g. 1000"

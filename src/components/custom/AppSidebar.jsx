@@ -21,7 +21,7 @@ import developer from "../../assets/developer.jpg";
 
 import { FaStackOverflow } from "react-icons/fa";
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlinePicture, AiOutlineDollarCircle, AiOutlineBook, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { MdOutlineReviews ,MdOutlineTableView } from "react-icons/md";
+import { MdOutlineReviews ,MdOutlineTableView ,MdOutlineLocalOffer } from "react-icons/md";
 
 const items = [
   {
@@ -62,7 +62,7 @@ const items = [
   {
     title: "Offers",
     url: "/offer-banner",
-    icon: AiOutlineBook,
+    icon: MdOutlineLocalOffer ,
   },
   {
     title: "Users",

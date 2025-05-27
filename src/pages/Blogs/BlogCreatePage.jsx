@@ -44,6 +44,10 @@ export default function CreateBlogPost() {
   const description = watch("description");
   const keywords = watch("keywords") || [];
 
+
+
+
+  
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) setPreviewImage(URL.createObjectURL(file));
@@ -76,10 +80,14 @@ const onSubmit = (data) => {
 
   formData.append("seo[title]", data.seoTitle || data.title);
   formData.append("seo[description]", data.seoDescription || "");
-  formData.append(
-    "seo[keywords]",
-    JSON.stringify((data.keywords || []).map((k) => k.value?.trim()).filter(Boolean))
-  );
+formData.append(
+  "seo[keywords]",
+  (data.keywords || [])
+    .map((k) => k?.value?.trim())
+    .filter(Boolean)
+    .join(",")
+);
+
   formData.append("seo[ogType]", data.ogType || "article");
   formData.append("seo[robots]", data.robots || "index, follow");
 
@@ -143,7 +151,7 @@ const onSubmit = (data) => {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               type="file"
               accept="image/*"
-              {...register("image", { required: true })}
+              {...register("image", { required: false })}
               onChange={handleImageChange}
             />
             {errors.image && <p className="text-sm text-red-500 mt-1">Image is required</p>}
@@ -170,7 +178,7 @@ const onSubmit = (data) => {
             </div>
 
             <div>
-              <Label>Keywords</Label>
+              <Label>SEO Keywords</Label>
               {keywordFields.length === 0 && (
                 <p className="text-gray-500 mb-2">
                   No keywords added. Click the button below to add one.

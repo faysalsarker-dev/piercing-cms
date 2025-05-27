@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm ,Controller} from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import RichTextEditor from "@/components/custom/RichTextEditor";
 import useAxios from "@/hooks/useAxios";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const slugify = (text) =>
   text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -40,14 +41,14 @@ export default function UpdateBlogPost() {
       seoDescription: "",
       ogType: "article",
       robots: "index, follow",
-      keywords: [],
+keywords: [{ value: "" }],
       description: "",
     },
   });
 const {
-  fields: keywordFields,
-  append: appendKeyword,
-  remove: removeKeyword,
+  fields,
+  append,
+  remove,
 } = useFieldArray({
   control,
   name: "keywords",
@@ -67,22 +68,34 @@ const {
     enabled: !!slug,
   });
 
-  useEffect(() => {
-    if (blogData) {
-      const description = blogData.content || "";
-      reset({
-        title: blogData.title,
-        seoTitle: blogData.seo?.title || "",
-        seoDescription: blogData.seo?.description || "",
-        keywords: blogData.seo?.keywords?.map((kw) => ({ value: kw })) || [],
-        ogType: blogData.seo?.ogType || "article",
-        robots: blogData.seo?.robots || "index, follow",
-        description,
-      });
-      setEditorContent(description);
-      setPreviewImage(`${import.meta.env.VITE_API}/images/${blogData.image}`);
-    }
-  }, [blogData, reset]);
+useEffect(() => {
+  if (blogData) {
+    const description = blogData?.content || "";
+
+   
+       const keywordsArray = Array.isArray(blogData.seo?.keywords)
+      ? blogData.seo.keywords.join(",").split(",")
+      : (blogData.seo?.keywords || "").split(",");
+
+    const keywords = keywordsArray.map((keyword) => ({
+      value: keyword.trim(),
+    }));
+
+    reset({
+      title: blogData.title,
+      seoTitle: blogData.seo?.title || "",
+      seoDescription: blogData.seo?.description || "",
+      keywords,
+      ogType: blogData.seo?.ogType || "article",
+      robots: blogData.seo?.robots || "index, follow",
+      description,
+    });
+
+    setEditorContent(description);
+    setPreviewImage(`${import.meta.env.VITE_API}/images/${blogData.image}`);
+  }
+}, [blogData, reset]);
+
 
   // Update blog post mutation
   const { mutate, isPending } = useMutation({
@@ -107,14 +120,14 @@ const {
 
     formData.append("seo[title]", data.seoTitle || data.title);
     formData.append("seo[description]", data.seoDescription || "");
-   formData.append(
+formData.append(
   "seo[keywords]",
-  JSON.stringify(
-    (data.keywords || [])
-      .map((k) => k?.value?.trim())
-      .filter(Boolean)
-  )
+  (data.keywords || [])
+    .map((k) => k?.value?.trim())
+    .filter(Boolean)
+    .join(",")
 );
+
 
     formData.append("seo[ogType]", data.ogType || "article");
     formData.append("seo[robots]", data.robots || "index, follow");
@@ -125,7 +138,6 @@ const {
 
     mutate(formData);
   };
-
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) setPreviewImage(URL.createObjectURL(file));
@@ -176,7 +188,7 @@ const {
               value={editorContent || ""}
               onChange={(val) => {
                 setEditorContent(val);
-                setValue("description", val); // Sync with form state
+                setValue("description", val); 
               }}
             />
           </div>
@@ -195,39 +207,48 @@ const {
               <Textarea placeholder="Meta description" {...register("seoDescription")} />
             </div>
 
-            <div>
-              <Label>Keywords</Label>
-              <div className="max-h-48 overflow-y-auto w-full rounded-md border px-4 py-2">
-                {keywordFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2 items-center mb-3">
-                    <Input
-                      {...register(`keywords.${index}.value`, {
-                        required: "Keyword is required",
-                      })}
-                      placeholder="e.g. react"
-                      className={errors.keywords?.[index]?.value ? "border-red-500" : ""}
-                    />
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => removeKeyword(index)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                ))}
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => appendKeyword({ value: "" })}
-                className="mt-2"
-              >
-                + Add Keyword
-              </Button>
-            </div>
+
+
+<div className="space-y-2">
+  <Label>SEO Keywords</Label>
+
+  <ScrollArea className="h-48 rounded-md border px-2 py-1">
+    <div className="space-y-2 pr-2">
+      {fields.map((field, index) => (
+        <div key={field.id} className="flex gap-2 items-center">
+          <Controller
+            control={control}
+            name={`keywords.${index}.value`}
+            render={({ field }) => (
+              <Input {...field} placeholder="e.g. marketing" />
+            )}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            onClick={() => remove(index)}
+          >
+            ✕
+          </Button>
+        </div>
+      ))}
+    </div>
+  </ScrollArea>
+
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => append({ value: "" })}
+  >
+    + Add Keyword
+  </Button>
+</div>
+
+
+
+
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
