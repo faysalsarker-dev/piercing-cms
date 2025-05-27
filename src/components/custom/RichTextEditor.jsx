@@ -43,6 +43,8 @@ const formats = [
   "direction",
 ];
 
+import PropTypes from "prop-types";
+
 export default function RichTextEditor({ value, onChange }) {
   return (
     <div className=" mx-auto p-6">
@@ -59,3 +61,8 @@ export default function RichTextEditor({ value, onChange }) {
     </div>
   );
 }
+
+RichTextEditor.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};

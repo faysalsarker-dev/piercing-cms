@@ -25,37 +25,37 @@ export default function UpdateBlogPost() {
   const navigate = useNavigate();
   const axiosCommon = useAxios();
 
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      title: "",
+      seoTitle: "",
+      seoDescription: "",
+      ogType: "article",
+      robots: "index, follow",
+      keywords: [],
+      description: "",
+    },
+  });
 const {
-  register,
-  handleSubmit,
+  fields: keywordFields,
+  append: appendKeyword,
+  remove: removeKeyword,
+} = useFieldArray({
   control,
-  setValue,
-  reset,
-  watch,
-  formState: { errors },
-} = useForm({
-  defaultValues: {
-    title: "",
-    seoTitle: "",
-    seoDescription: "",
-    ogType: "article",
-    robots: "index, follow",
-    keywords: [],
-    description: "",
-  },
+  name: "keywords",
 });
 
-  const {
-    fields: keywordFields,
-    append: appendKeyword,
-    remove: removeKeyword,
-  } = useFieldArray({
-    control,
-    name: "keywords",
-  });
 
   const [previewImage, setPreviewImage] = useState(null);
-  const description = watch("description");
+  const [editorContent, setEditorContent] = useState("");
 
   // Fetch existing blog post
   const { data: blogData, isLoading } = useQuery({
@@ -67,19 +67,20 @@ const {
     enabled: !!slug,
   });
 
-  // Populate form with existing data
   useEffect(() => {
     if (blogData) {
+      const description = blogData.content || "";
       reset({
         title: blogData.title,
-        seoTitle: blogData.seo?.title,
-        seoDescription: blogData.seo?.description,
+        seoTitle: blogData.seo?.title || "",
+        seoDescription: blogData.seo?.description || "",
         keywords: blogData.seo?.keywords?.map((kw) => ({ value: kw })) || [],
         ogType: blogData.seo?.ogType || "article",
         robots: blogData.seo?.robots || "index, follow",
-        description: blogData.content,
+        description,
       });
-      setPreviewImage(`${import.meta.env.VITE_API}/images/${blogData.image}`); 
+      setEditorContent(description);
+      setPreviewImage(`${import.meta.env.VITE_API}/images/${blogData.image}`);
     }
   }, [blogData, reset]);
 
@@ -102,18 +103,19 @@ const {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("slug", slugify(data.title));
-    formData.append("content", data.description);
+    formData.append("content", editorContent);
 
     formData.append("seo[title]", data.seoTitle || data.title);
     formData.append("seo[description]", data.seoDescription || "");
-    formData.append(
-      "seo[keywords]",
-      JSON.stringify(
-        (data.keywords || [])
-          .map((k) => k.value?.trim())
-          .filter(Boolean)
-      )
-    );
+   formData.append(
+  "seo[keywords]",
+  JSON.stringify(
+    (data.keywords || [])
+      .map((k) => k?.value?.trim())
+      .filter(Boolean)
+  )
+);
+
     formData.append("seo[ogType]", data.ogType || "article");
     formData.append("seo[robots]", data.robots || "index, follow");
 
@@ -128,7 +130,7 @@ const {
     const file = e.target.files?.[0];
     if (file) setPreviewImage(URL.createObjectURL(file));
   };
-console.log(blogData?.content,'blogData.content');
+
   return (
     <Card className="max-w-4xl mx-auto my-10 shadow-lg">
       <CardHeader>
@@ -144,30 +146,15 @@ console.log(blogData?.content,'blogData.content');
           </div>
 
           {/* Image Preview */}
-       <div className="relative w-full">
+          <div className="relative w-full">
             {previewImage ? (
-              <img
-                src={previewImage}
-                alt="Uploaded"
-                className="w-full rounded-lg"
-              />
+              <img src={previewImage} alt="Uploaded" className="w-full rounded-lg" />
             ) : (
               <div className="border-dashed flex justify-center items-center border-2 border-gray-300 bg-gray-50 w-full h-64 rounded-lg">
                 <h3 className="text-center text-xl font-semibold flex items-center gap-2 text-gray-500">
                   Upload your image
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                   </svg>
                 </h3>
               </div>
@@ -179,15 +166,20 @@ console.log(blogData?.content,'blogData.content');
               {...register("image")}
               onChange={handleImageChange}
             />
-            {errors.image && <p className="text-sm text-red-500 mt-1">Image is required</p>}
           </div>
 
-          {/* Content */}
-          <RichTextEditor
-            className="w-full"
-            value={description}
-            onChange={(val) => setValue("description", val)}
-          />
+          {/* RichTextEditor */}
+          <div>
+            <Label>Content</Label>
+            <RichTextEditor
+              className="w-full"
+              value={editorContent || ""}
+              onChange={(val) => {
+                setEditorContent(val);
+                setValue("description", val); // Sync with form state
+              }}
+            />
+          </div>
 
           {/* SEO Section */}
           <div className="border-t pt-4 space-y-4">

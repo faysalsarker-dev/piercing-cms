@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import OfferBannerCard from "@/components/custom/OfferBannerCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CreateOffer from "./CreateOffer";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 import useAxios from "@/hooks/useAxios";
@@ -28,22 +28,72 @@ const OfferBanner = () => {
         <Button onClick={() => setIsCreateOpen(true)}>Add Offer Banner</Button>
       </div>
 
-      {/* Create Offer Dialog */}
+      {/* Create Dialog */}
       <CreateOffer open={isCreateOpen} setOpen={setIsCreateOpen} refetch={refetch} />
 
-      {/* Loading or Offer Grid */}
+      {/* Table View */}
       {isLoading ? (
         <div className="text-center py-10 text-gray-500 font-medium">Loading offers...</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {data?.map((offer) => (
-            <OfferBannerCard
-              key={offer._id}
-              offer={offer}
-              setOpen={setIsDeleteOpen}
-              setDeleteId={setDeleteId}
-            />
-          ))}
+        <div className="overflow-auto rounded-md border border-gray-200">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Image</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Redirect URL</TableHead>
+                <TableHead>Display On</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data?.map((offer) => (
+                <TableRow key={offer._id}>
+                  <TableCell>
+                    <img
+                      src={`${import.meta.env.VITE_API}/images/${offer?.imageUrl}`}
+                      alt={offer.title}
+                      className="w-20 h-14 object-cover rounded"
+                    />
+                  </TableCell>
+                  <TableCell>{offer.title}</TableCell>
+                
+                  <TableCell>{offer.redirectUrl}</TableCell>
+                  <TableCell>
+                    <ul className="list-disc list-inside text-sm">
+                      {offer?.displayOn?.map((path) => (
+                        <li key={path}>{path}</li>
+                      ))}
+                    </ul>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded ${
+                        offer.isActive
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                      }`}
+                    >
+                      {offer.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setIsDeleteOpen(true);
+                        setDeleteId(offer._id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
 
