@@ -37,9 +37,9 @@ const chartConfig = {
 };
 
 const BookingsTrend = ({ trend = [] }) => {
-  const formattedData = trend.map((item) => ({
+  const formattedData = trend?.map((item) => ({
     ...item,
-    monthLabel: new Date(item.month).toLocaleDateString("en-US", {
+    monthLabel: new Date(item?.month).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
     }),
@@ -59,7 +59,7 @@ const BookingsTrend = ({ trend = [] }) => {
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <AreaChart data={formattedData}>
             <defs>
-              {Object.entries(chartConfig.datasets).map(([key, { gradientId, color }]) => (
+              {Object.entries(chartConfig?.datasets).map(([key, { gradientId, color }]) => (
                 <linearGradient id={gradientId} key={key} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={color} stopOpacity={0.8} />
                   <stop offset="95%" stopColor={color} stopOpacity={0.1} />
@@ -86,13 +86,13 @@ const BookingsTrend = ({ trend = [] }) => {
               }
             />
 
-            {Object.entries(chartConfig.datasets).map(([key, { label, gradientId }]) => (
+            {Object?.entries(chartConfig?.datasets)?.map(([key, { label, gradientId }]) => (
               <Area
                 key={key}
                 type="monotone"
                 dataKey={key}
                 name={label}
-                stroke={chartConfig.datasets[key].color}
+                stroke={chartConfig?.datasets[key].color}
                 fill={`url(#${gradientId})`}
               />
             ))}

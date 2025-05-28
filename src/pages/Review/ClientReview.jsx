@@ -113,7 +113,7 @@ const ClientReview = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {testimonials?.map((t) => (
-          <Card key={t._id} className="relative">
+          <Card key={t?._id} className="relative">
             <Button
               size="icon"
               variant="ghost"
@@ -138,14 +138,14 @@ const ClientReview = () => {
               <FaQuoteLeft className="text-primary text-3xl" />
               <p className="text-center italic text-muted-foreground">{t.review}</p>
               <img
-                src={t.image}
-                alt={t.name}
+                src={`${import.meta.env.VITE_API}/images/${t?.image}`}
+                alt={t?.name}
                 className="w-16 h-16 rounded-full border-2 border-primary"
               />
-              <h4 className="font-semibold text-lg">{t.name}</h4>
+              <h4 className="font-semibold text-lg">{t?.name}</h4>
               <div className="text-yellow-500">
                 <Rating
-                  initialRating={t.rating}
+                  initialRating={t?.rating}
                   emptySymbol={<FaRegStar />}
                   fullSymbol={<FaStar />}
                   readonly

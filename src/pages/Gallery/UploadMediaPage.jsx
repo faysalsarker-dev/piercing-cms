@@ -39,7 +39,7 @@ const UploadMediaPage = () => {
 };
 
 
-  const { mutate: uploadMedia, isLoading } = useMutation({
+  const { mutate: uploadMedia, isPending } = useMutation({
     mutationFn: async (formData) => {
       const res = await axiosCommon.post("/gallery", formData);
       return res.data;
@@ -148,8 +148,8 @@ const UploadMediaPage = () => {
             </select>
           </div>
 
-          <Button onClick={handleUpload} disabled={isLoading} className="w-full">
-            {isLoading ? "Uploading..." : "Upload"}
+          <Button onClick={handleUpload} disabled={isPending} className="w-full">
+            {isPending ? "Uploading..." : "Upload"}
           </Button>
         </CardContent>
       </Card>

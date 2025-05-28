@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Table,
@@ -67,24 +67,24 @@ const Gallery = () => {
         </TableHeader>
         <TableBody>
           {data?.map((item) => (
-            <TableRow key={item._id}>
+            <TableRow key={item?._id}>
               <TableCell>
-                {item.type === "image" ? (
+                {item?.type === "image" ? (
                   <img
-                    src={`${import.meta.env.VITE_API}/images/${item.url}`}
+                    src={`${import.meta.env.VITE_API}/images/${item?.url}`}
                     alt="lery"
                     className="w-20 h-20 object-cover rounded-md"
                   />
-                ) : item.type === "video" ?(
+                ) : item?.type === "video" ?(
                   <video
                     controls
                     className="w-20 h-20 object-cover rounded-md"
-                    src={`${import.meta.env.VITE_API}/images/${item.url}`}
+                    src={`${import.meta.env.VITE_API}/images/${item?.url}`}
                   />
                 ):(
 
                        <iframe
-        src={item.url}
+        src={item?.url}
         title="Media Preview"
         className="w-20 h-20 rounded"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -95,16 +95,16 @@ const Gallery = () => {
 <TableCell>
   <Badge
     className={
-      item.status === "active"
+      item?.status === "active"
         ? "bg-green-500 hover:bg-green-600"
-        : item.status === "inactive"
+        : item?.status === "inactive"
         ? "bg-yellow-500 hover:bg-yellow-600"
-        : item.status === "blocked"
+        : item?.status === "blocked"
         ? "bg-red-500 hover:bg-red-600"
         : "bg-gray-500"
     }
   >
-    {item.status}
+    {item?.status}
   </Badge>
 </TableCell>              <TableCell className="text-right">
                 <Button size="icon" variant="ghost"

@@ -5,12 +5,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import CreateOffer from "./CreateOffer";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
 import useAxios from "@/hooks/useAxios";
+import UpdateOffer from "./UpdateOffer";
+import { Pencil } from "lucide-react";
 
 const OfferBanner = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
+const [isEditOpen, setEditOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const axiosCommon = useAxios();
 
   const { data, isLoading, refetch } = useQuery({
@@ -80,6 +83,18 @@ const OfferBanner = () => {
                   </TableCell>
                   <TableCell>
                     <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+setSelectedOffer(offer)
+                        setEditOpen(true);
+                      }}
+                    >
+                      <Pencil className="w-4 h-4 mr-1" />
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
@@ -96,6 +111,7 @@ const OfferBanner = () => {
           </Table>
         </div>
       )}
+<UpdateOffer open={isEditOpen} setOpen={setEditOpen} offerData={selectedOffer} refetch={refetch} />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog

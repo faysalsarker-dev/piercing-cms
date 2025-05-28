@@ -1,10 +1,6 @@
-"use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { Pencil, Trash2 } from "lucide-react";
-import useAxios from "@/hooks/useAxios";
 
 import {
   Card,
@@ -20,48 +16,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
 import { DeleteConfirmDialog } from "@/components/custom/DeleteConfirmDialog";
-
-export default function PriceListTable() {
+import UpdatePriceListDialog from "./UpdatePriceListDialog";
+import PropTypes from "prop-types";
+export default function PriceListTable({priceList,isLoading, refetch}) {
   const [open, setOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [selectedPriceItem, setSelectedPriceItem] = useState(null);
 
-  const axiosCommon = useAxios();
-
-  const { data: priceList = [], isLoading, refetch } = useQuery({
-    queryKey: ["pricelist"],
-    queryFn: async () => {
-      const res = await axiosCommon.get("/price");
-      return res.data;
-    },
-  });
 
   return (
     <Card className="w-full shadow-md">
-      <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle>Price List</CardTitle>
-        <Select defaultValue="all">
-          <SelectTrigger className="w-[250px]">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            <SelectItem value="needles piercing">Needles Piercing</SelectItem>
-            <SelectItem value="piercing with gun">Piercing with Gun</SelectItem>
-            <SelectItem value="microlidding">Microlidding</SelectItem>
-          </SelectContent>
-        </Select>
-      </CardHeader>
+  
 
-      <CardContent>
+      <>
         {isLoading ? (
           <p className="text-center py-6">Loading...</p>
         ) : (
@@ -79,12 +50,12 @@ export default function PriceListTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {priceList.map((item) => (
+                {priceList?.map((item) => (
                   <TableRow key={item?._id}>
                     <TableCell>
                       {item?.image ? (
                         <img
-                          src={item.image}
+                          src={`${import.meta.env.VITE_API}/images/${item?.image}`}
                           alt="thumb"
                           className="w-14 h-14 object-cover rounded-md"
                         />
@@ -107,7 +78,10 @@ export default function PriceListTable() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => toast("Open edit dialog")}
+                        onClick={() => {
+                          setSelectedPriceItem(item);
+                          setIsUpdateOpen(true);
+                        }}
                       >
                         <Pencil size={16} />
                       </Button>
@@ -124,7 +98,7 @@ export default function PriceListTable() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {priceList.length === 0 && (
+                {priceList?.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
                       No items in this category.
@@ -135,7 +109,17 @@ export default function PriceListTable() {
             </Table>
           </div>
         )}
-      </CardContent>
+      </>
+
+<UpdatePriceListDialog
+  open={isUpdateOpen}
+  setOpen={setIsUpdateOpen}
+  refetch={refetch}
+  data={selectedPriceItem}
+/>
+
+
+
 
       <DeleteConfirmDialog
         open={open}
@@ -147,3 +131,9 @@ export default function PriceListTable() {
     </Card>
   );
 }
+
+PriceListTable.propTypes = {
+  priceList: PropTypes.array,
+  isLoading: PropTypes.bool,
+  refetch: PropTypes.func,
+};

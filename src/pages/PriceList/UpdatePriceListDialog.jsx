@@ -17,9 +17,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
-import React, { useState,  useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
+import PropTypes from "prop-types";
 
 const CATEGORY_OPTIONS = [
   { value: "needles piercing", label: "Needles Piercing" },
@@ -32,10 +33,9 @@ const WEB_OPTIONS = [
   { value: "klippsodermalm", label: "Klip Södermalm" },
   { value: "both", label: "Both" },
 ];
-import PropTypes from 'prop-types';
 
-export default function CreatePriceListDialog({ open, setOpen, refetch }) {
-  const [imagePreview, setImagePreview] = useState(null);
+export default function UpdatePriceListDialog({ open, setOpen, refetch, data }) {
+  const [imagePreview, setImagePreview] = useState(data?.image || null);
   const axiosCommon = useAxios();
 
   const {
@@ -44,98 +44,104 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
     reset,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: "",
-      regularPrice: "",
-      discountedPrice: "",
-      description: "",
-      category: "",
-      web: "",
+      title: data?.title || "",
+      regularPrice: data?.regularPrice || "",
+      discountedPrice: data?.discountedPrice || "",
+      description: data?.description || "",
+      category: data?.category || "",
+      web: data?.web || "",
       image: null,
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (formData) => {
-      return await axiosCommon.post("/price", formData);
-    },
-    onSuccess: () => {
-      toast.success("Price list created");
-      reset();
-      setImagePreview(null);
-      setOpen(false);
-      refetch();
-    },
-    onError: () => {
-      toast.error("Failed to create price list");
-    },
-  });
-  
+  useEffect(() => {
+    if (data) {
+      reset({
+        title: data.title,
+        regularPrice: data.regularPrice,
+        discountedPrice: data.discountedPrice,
+        description: data.description,
+        category: data.category,
+        web: data.web,
+        image: null,
+      });
+                               
 
-  // Watch image for preview
+      setImagePreview(`${import.meta.env.VITE_API}/images/${data?.image}`);
+    }
+  }, [data, reset]);
+
   const imageFile = watch("image")?.[0];
-  // Update preview when image changes
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (imageFile) {
       const url = URL.createObjectURL(imageFile);
       setImagePreview(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      setImagePreview(null);
     }
   }, [imageFile]);
 
-  const onSubmit = (data) => {
+  const mutation = useMutation({
+    mutationFn: async (formData) => {
+      return await axiosCommon.put(`/price/${data._id}`, formData);
+    },
+    onSuccess: () => {
+      toast.success("Price list updated");
+      setOpen(false);
+      refetch();
+    },
+    onError: () => {
+      toast.error("Failed to update price list");
+    },
+  });
+
+  const onSubmit = (formDataData) => {
     const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("regularPrice", data.regularPrice);
-    formData.append("discountedPrice", data.discountedPrice);
-    formData.append("description", data.description);
-    formData.append("category", data.category);
-    formData.append("web", data.web);
-    if (data.image?.[0]) {
-      formData.append("image", data.image[0]);
+    formData.append("title", formDataData.title);
+    formData.append("regularPrice", formDataData.regularPrice);
+    formData.append("discountedPrice", formDataData.discountedPrice);
+    formData.append("description", formDataData.description);
+    formData.append("category", formDataData.category);
+    formData.append("web", formDataData.web);
+    if (formDataData.image?.[0]) {
+      formData.append("image", formDataData.image[0]);
     }
-    console.log(formData,'formData');
     mutation.mutate(formData);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-  
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl">Create Price List</DialogTitle>
+          <DialogTitle className="text-xl">Update Price List</DialogTitle>
         </DialogHeader>
         <div className="max-h-[80vh] overflow-y-auto p-4 rounded-xl shadow-lg bg-white space-y-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {/* Title */}
               <div className="space-y-1">
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
                   {...register("title", { required: "Title is required" })}
                   placeholder="e.g. Nose Piercing"
-                  autoComplete="off"
                 />
                 {errors.title && (
                   <p className="text-sm text-red-500">{errors.title.message}</p>
                 )}
               </div>
-              {/* Regular Price */}
+
               <div className="space-y-1">
                 <Label htmlFor="regularPrice">Regular Price</Label>
                 <Input
                   id="regularPrice"
                   {...register("regularPrice", {
-                   
                     min: { value: 0, message: "Must be positive" },
                   })}
                   placeholder="e.g. 1000"
-                  min={0}
                 />
                 {errors.regularPrice && (
                   <p className="text-sm text-red-500">
@@ -143,7 +149,7 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   </p>
                 )}
               </div>
-              {/* Discounted Price */}
+
               <div className="space-y-1">
                 <Label htmlFor="discountedPrice">Discounted Price</Label>
                 <Input
@@ -153,7 +159,6 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                     min: { value: 0, message: "Must be positive" },
                   })}
                   placeholder="e.g. 800"
-                  min={0}
                 />
                 {errors.discountedPrice && (
                   <p className="text-sm text-red-500">
@@ -161,7 +166,7 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   </p>
                 )}
               </div>
-              {/* Description */}
+
               <div className="md:col-span-3 space-y-1">
                 <Label htmlFor="description">Description</Label>
                 <textarea
@@ -170,13 +175,8 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   className="w-full border rounded-md p-2 min-h-[100px]"
                   placeholder="Short description"
                 />
-                {errors.description && (
-                  <p className="text-sm text-red-500">
-                    {errors.description.message}
-                  </p>
-                )}
               </div>
-              {/* Category */}
+
               <div className="space-y-1">
                 <Label htmlFor="category">Category</Label>
                 <Controller
@@ -184,11 +184,7 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   control={control}
                   rules={{ required: "Category is required" }}
                   render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue=""
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -203,12 +199,10 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   )}
                 />
                 {errors.category && (
-                  <p className="text-sm text-red-500">
-                    {errors.category.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.category.message}</p>
                 )}
               </div>
-              {/* Web Option */}
+
               <div className="space-y-1">
                 <Label htmlFor="web">Web</Label>
                 <Controller
@@ -216,11 +210,7 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   control={control}
                   rules={{ required: "Web type is required" }}
                   render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue=""
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select web type" />
                       </SelectTrigger>
@@ -235,14 +225,12 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                   )}
                 />
                 {errors.web && (
-                  <p className="text-sm text-red-500">
-                    {errors.web.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.web.message}</p>
                 )}
               </div>
-              {/* Image Upload */}
+
               <div className="space-y-2">
-                <Label htmlFor="image">Upload Image</Label>
+                <Label htmlFor="image">Update Image</Label>
                 <Input
                   type="file"
                   id="image"
@@ -258,22 +246,15 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
                 )}
               </div>
             </div>
-            {/* Buttons */}
+
             <div className="flex justify-end gap-3 pt-4 border-t mt-4">
               <DialogClose asChild>
                 <Button type="button" variant="outline">
                   Cancel
                 </Button>
               </DialogClose>
-             
-              <button
-                type="button"
-                className="hidden"
-                tabIndex={-1}
-                aria-hidden="true"
-              />
               <Button type="submit" disabled={mutation.isPending}>
-                {mutation.isPending ? "Saving..." : "Save"}
+                {mutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
@@ -283,9 +264,9 @@ export default function CreatePriceListDialog({ open, setOpen, refetch }) {
   );
 }
 
-
-CreatePriceListDialog.propTypes = {
+UpdatePriceListDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
-  refetch: PropTypes.func,
+  refetch: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired,
 };
