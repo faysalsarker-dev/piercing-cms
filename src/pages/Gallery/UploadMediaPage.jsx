@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import useAxios from "@/hooks/useAxios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const UploadMediaPage = () => {
   const axiosCommon = useAxios();
@@ -15,7 +16,7 @@ const UploadMediaPage = () => {
   const [type, setType] = useState("");
   const [status, setStatus] = useState("active");
   const [serial, setSerial] = useState("");
-
+const navigate = useNavigate();
 
 
   const handleFileChange = (e) => {
@@ -51,6 +52,7 @@ const UploadMediaPage = () => {
       setPreviewUrl(null);
       setSerial("");
       setType("");
+      navigate("/gallery"); 
     },
     onError: (error) => {
       console.error(error);
@@ -148,7 +150,7 @@ const UploadMediaPage = () => {
             </select>
           </div>
 
-          <Button onClick={handleUpload} disabled={isPending} className="w-full">
+          <Button onClick={handleUpload} disabled={isPending} className="w-full bg-primary">
             {isPending ? "Uploading..." : "Upload"}
           </Button>
         </CardContent>

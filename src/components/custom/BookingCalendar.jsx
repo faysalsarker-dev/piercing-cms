@@ -4,7 +4,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
-import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 
 
@@ -12,22 +11,16 @@ import { Skeleton } from "../ui/skeleton";
 const BookingCalendar = ({handleEventClick}) => {
   const axiosCommon = useAxios();
 
-// Always correct today’s full date
-const [currentDate, setCurrentDate] = useState(format(new Date(), "yyyy-MM-dd"));
-console.log('formatted',currentDate );
 
 
-
-// const today = new Date();
-// console.log(format(today, "yyyy-MM-dd"),'today');
 
 
 
 
   const { data, isLoading } = useQuery({
-    queryKey: ["calendar-summary", currentDate],
+    queryKey: ["calendar-summary"],
     queryFn: async () => {
-      const res = await axiosCommon.get(`/summaries?date=${currentDate}`);
+      const res = await axiosCommon.get(`/summaries`);
       return res.data;
     },
   });
@@ -46,16 +39,7 @@ console.log('formatted',currentDate );
   })) || [];
 
 
-  // const handleMonthChange = (info) => {
-  //   const month = format(info.start, "yyyy-MM-dd");
-  //   setCurrentDate(month);
-  
-  // };
 
-const handleMonthChange = (selectedDate) => {
-  // console.log(format(new Date(selectedDate.start), "yyyy-MM-dd"));
-  // setCurrentDate(format(new Date(selectedDate.start), "yyyy-MM-dd"));
-};
 
 
   const eventDates = new Set(
@@ -88,9 +72,7 @@ const handleMonthChange = (selectedDate) => {
             events={events}
             eventClick={handleEventClick}
   dayCellDidMount={onDayCellDidMount}
-
             height="auto"
-            datesSet={handleMonthChange}
           />  
         </>
       )}

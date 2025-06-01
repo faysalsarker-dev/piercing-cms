@@ -42,7 +42,6 @@ export default function BookingPage() {
   const [dateRange, setDateRange] = useState({});
   const [page, setPage] = useState(1);
   const limit = 10;
-console.log(dateRange,'date rangee');
   const watchedFields = watch();
 
   // Construct query parameters

@@ -35,7 +35,7 @@ const Dashboard = () => {
       
 
 
-<BookingsTrend trend={data.trend}/>
+<BookingsTrend trend={data?.trend}/>
 
 
 <TopServices topServices={data?.topServices}/>

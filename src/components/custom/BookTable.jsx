@@ -25,12 +25,15 @@ import {
 } from "../ui/table";
 
 import BookingHandler from "./BookingHandler";
+import BookingDialog from "./BookingDialog";
 
 const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
   const totalPages = Math.ceil(total / limit);
   const [bookingData, setBookingData] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [dataInfo, setDataInfo] = useState({});
  
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
 
 
 
@@ -119,12 +122,13 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
                   <TableCell>{booking.slot}</TableCell>
                   <TableCell>{renderStatusBadge(booking.status)}</TableCell>
                   <TableCell>
-                    <button
-                      onClick={() => onEdit(booking)}
-                      className="text-primary hover:text-primary/80"
-                    >
-                      <Pencil size={18} />
-                    </button>
+                    <button onClick={() => {
+  setDataInfo(booking);
+  setBookingDialogOpen(true);
+  
+}}>
+  <Pencil className="w-4 h-4 text-primary" />
+</button>
                   </TableCell>
                 </TableRow>
               ))
@@ -184,6 +188,11 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
           </PaginationContent>
         </Pagination>
       )}
+
+
+
+      <BookingDialog open={bookingDialogOpen} setOpen={setBookingDialogOpen} data={dataInfo} />
+      
     </div>
   );
 };

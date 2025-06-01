@@ -2,11 +2,22 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import BookingCalendar from "@/components/custom/BookingCalendar";
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Pencil } from "lucide-react";
+import BookingDialog from "@/components/custom/BookingDialog";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [data, setData] = useState(null);
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  
+
+
+
 
   const handleEventClick = (info) => {
     setSelectedDate(info.event.startStr);
@@ -18,11 +29,13 @@ export default function Home() {
     if (!dateStr) return "N/A";
     try {
       return format(new Date(dateStr), "EEEE, MMMM d, yyyy");
-    } catch (error) {
+    } catch  {
       return "Invalid Date";
     }
   };
 
+
+ 
   return (
     <div className="p-4">
          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -47,23 +60,56 @@ export default function Home() {
           {selectedSlots.length > 0 ? (
             <div className="space-y-4 max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/30">
               {selectedSlots.map((slot, idx) => (
-                <div
-                  key={idx}
-                  className="bg-muted/40 rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow transition"
-                >
-                  <div className="text-sm text-gray-700">
-                    <span className="font-semibold text-primary">Time:</span>{" "}
-                    {slot.time}
-                  </div>
-                  <div className="text-sm text-gray-700">
-                    <span className="font-semibold text-primary">Name:</span>{" "}
-                    {slot.user?.name || "Unknown"}
-                  </div>
-                  <div className="text-sm text-gray-700">
-                    <span className="font-semibold text-primary">Phone:</span>{" "}
-                    {slot.user?.phone || "N/A"}
-                  </div>
-                </div>
+                
+               <Card
+        key={idx}
+        className="transition-all hover:shadow-md border border-border shadow-sm rounded-2xl bg-muted/40"
+      >
+  <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg text-primary">Booking Details</CardTitle>
+            <p className="text-sm text-muted-foreground">Time: {slot.time}</p>
+          </div>
+     <button onClick={() => {
+  setData(slot.clientDetails);
+  setBookingDialogOpen(true);
+  setDialogOpen(false);
+}}>
+  <Pencil className="w-4 h-4 text-primary" />
+</button>
+
+          
+
+        </CardHeader>
+
+        <Separator />
+
+        <CardContent className="pt-4 space-y-3 text-sm text-gray-700">
+          <div>
+            <span className="font-medium text-primary">Name:</span>{" "}
+            {slot?.clientDetails?.name || "Unknown"}
+          </div>
+          <div>
+            <span className="font-medium text-primary">Phone:</span>{" "}
+            {slot?.clientDetails?.phone || "N/A"}
+          </div>
+          <div>
+            <span className="font-medium text-primary">Service:</span>{" "}
+            {slot?.clientDetails?.service || "N/A"}
+          </div>
+          <div>
+            <span className="font-medium text-primary">Price:</span>{" "}
+            {slot?.clientDetails?.price || "N/A"}
+          </div>
+          <div className="pt-2">
+            <Badge className={slot?.clientDetails?.status === "confirmed"
+        ? "bg-green-100 text-green-700"
+        : "bg-red-100 text-red-700"}>
+              Status: {slot?.clientDetails?.status}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
               ))}
             </div>
           ) : (
@@ -76,6 +122,7 @@ export default function Home() {
       <BookingCalendar handleEventClick={handleEventClick} />
 
    
+<BookingDialog open={bookingDialogOpen} setOpen={setBookingDialogOpen} data={data} />
     </div>
   );
 }

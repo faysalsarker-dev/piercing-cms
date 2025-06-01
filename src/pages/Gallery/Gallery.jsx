@@ -54,7 +54,7 @@ const Gallery = () => {
     <div className="p-4">
      <div className="flex justify-between"> <h2 className="text-2xl font-semibold mb-4">Gallery List</h2>
      
-<Link to='/upload-media'>     <Button>Post</Button></Link>
+<Link to='/upload-media'>     <Button className='bg-primary'>Post</Button></Link>
      
      </div>
       <Table>

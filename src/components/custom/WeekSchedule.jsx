@@ -230,32 +230,35 @@ const WeekSchedule = () => {
                 />
               </div>
             ) : (
-              <div className="space-y-2">
-                <Label>Slots</Label>
-                {fields.map((slot, index) => (
-                  <div key={slot.id} className="flex gap-2 items-center">
-                    <Controller
-                      name={`slots.${index}`}
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <Input {...field} placeholder="e.g. 10:00 AM - 11:00 AM" />
-                      )}
-                    />
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => remove(index)}
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => append('')}>
-                  + Add Slot
-                </Button>
-              </div>
+           <>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <Label>Slots</Label>
+                  {fields.map((slot, index) => (
+                    <div key={slot.id} className="flex gap-2 items-center">
+                      <Controller
+                        name={`slots.${index}`}
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                          <Input {...field} placeholder="e.g. 10:00 AM - 11:00 AM" />
+                        )}
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => remove(index)}
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  ))}
+             
+                </div>
+                     <Button type="button" variant="outline" onClick={() => append('')}>
+                    + Add Slot
+                  </Button>
+           </>
             )}
 
             <div className="flex justify-end gap-2 pt-4">

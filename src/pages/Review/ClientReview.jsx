@@ -19,6 +19,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import useAxios from "@/hooks/useAxios";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+const OPTIONS = [
+  { value: "piercingsodermalm", label: "Piercing Södermalm" },  
+  { value: "klippsodermalm", label: "Klip Södermalm" },
+  { value: "both", label: "Both" }
+]
+
 
 const ClientReview = () => {
   const axiosCommon = useAxios();
@@ -101,7 +108,23 @@ const ClientReview = () => {
               <Input {...register("name", { required: true })} placeholder="Your Name" />
               <Textarea {...register("review", { required: true })} placeholder="Write your review..." />
               <Input type="number" min="0" max="5" step="0.1" {...register("rating", { required: true })} placeholder="Rating (0-5)" />
-              <Input type="file" {...register("image")} />
+              <Input type="file" {...register("image", { required: true })} />
+                   <Select
+                     {...register("web")}
+                    className="w-full"
+                     
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select web" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
               <div className="flex justify-end gap-2">
                 <Button type="submit" disabled={isPending} variant="success">Submit</Button>
                 <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
