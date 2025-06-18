@@ -24,7 +24,9 @@ import useAxios from "@/hooks/useAxios";
 const CATEGORY_OPTIONS = [
   { value: "needles piercing", label: "Needles Piercing" },
   { value: "piercing with gun", label: "Piercing with Gun" },
-  { value: "microlidding", label: "Microlidding" },
+  { value: "microneedling", label: "Microneedling" },
+  { value: "herrfrisyr", label: "Herrklippning" },
+  { value: "lash lift", label: "Lash Lift & Brow Lift" },
 ];
 
 const WEB_OPTIONS = [

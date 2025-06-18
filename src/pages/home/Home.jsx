@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { format } from "date-fns";
 import BookingCalendar from "@/components/custom/BookingCalendar";
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Copy, Globe, X } from "lucide-react";
 import BookingDialog from "@/components/custom/BookingDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [data, setData] = useState(null);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
-  
 
 
 
@@ -22,107 +22,148 @@ export default function Home() {
   const handleEventClick = (info) => {
     setSelectedDate(info.event.startStr);
     setSelectedSlots(info.event.extendedProps.slots);
-    setDialogOpen(true);
+    setDrawerOpen(true);
   };
 
   const getFormattedDate = (dateStr) => {
     if (!dateStr) return "N/A";
     try {
       return format(new Date(dateStr), "EEEE, MMMM d, yyyy");
-    } catch  {
+    } catch {
       return "Invalid Date";
     }
   };
 
 
- 
+ const handleCopyEmail = (email) => {
+    if (email) {
+      navigator.clipboard.writeText(email);
+      toast.success("copied to clipboard");
+    }
+  };
+
+const statusColor = {
+  
+  confirmed: "bg-green-600",
+  canceled: "bg-red-500",
+};
+
   return (
     <div className="p-4">
-         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-     <DialogContent
-  className="w-full max-w-lg p-6 rounded-2xl shadow-xl border bg-white  
-             top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fixed"
->
-
-      
-
-          {/* Title */}
-          <h2 className="text-2xl font-semibold text-center text-primary mb-3">
-            Booking Details
-          </h2>
-
-          {/* Formatted Date */}
-          <div className="text-center text-base font-medium text-gray-600 mb-6">
-            {getFormattedDate(selectedDate)}
-          </div>
-
-          {/* Booking List */}
-          {selectedSlots.length > 0 ? (
-            <div className="space-y-4 max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/30">
-              {selectedSlots.map((slot, idx) => (
-                
-               <Card
-        key={idx}
-        className="transition-all hover:shadow-md border border-border shadow-sm rounded-2xl bg-muted/40"
-      >
-  <CardHeader className="pb-2 flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-lg text-primary">Booking Details</CardTitle>
-            <p className="text-sm text-muted-foreground">Time: {slot.time}</p>
-          </div>
-     <button onClick={() => {
-  setData(slot.clientDetails);
-  setBookingDialogOpen(true);
-  setDialogOpen(false);
-}}>
-  <Pencil className="w-4 h-4 text-primary" />
-</button>
-
-          
-
-        </CardHeader>
-
-        <Separator />
-
-        <CardContent className="pt-4 space-y-3 text-sm text-gray-700">
-          <div>
-            <span className="font-medium text-primary">Name:</span>{" "}
-            {slot?.clientDetails?.name || "Unknown"}
-          </div>
-          <div>
-            <span className="font-medium text-primary">Phone:</span>{" "}
-            {slot?.clientDetails?.phone || "N/A"}
-          </div>
-          <div>
-            <span className="font-medium text-primary">Service:</span>{" "}
-            {slot?.clientDetails?.service || "N/A"}
-          </div>
-          <div>
-            <span className="font-medium text-primary">Price:</span>{" "}
-            {slot?.clientDetails?.price || "N/A"}
-          </div>
-          <div className="pt-2">
-            <Badge className={slot?.clientDetails?.status === "confirmed"
-        ? "bg-green-100 text-green-700"
-        : "bg-red-100 text-red-700"}>
-              Status: {slot?.clientDetails?.status}
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground text-sm">
-              No bookings for this date.
-            </p>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Calendar */}
       <BookingCalendar handleEventClick={handleEventClick} />
 
-   
-<BookingDialog open={bookingDialogOpen} setOpen={setBookingDialogOpen} data={data} />
+      {/* Booking Drawer */}
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent
+          side="right"
+          className="w-full max-w-md h-screen bg-white border-l border-border shadow-xl flex flex-col"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-muted">
+            <h2 className="text-lg font-semibold text-primary">Booking Info</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setDrawerOpen(false)}
+              className="text-muted-foreground hover:text-primary"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* Content with scroll */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-sm text-gray-700">
+            <div><strong>Date:</strong> {getFormattedDate(selectedDate)}</div>
+
+            {selectedSlots.length > 0 ? (
+              selectedSlots.map((slot, idx) => (
+                <Card key={idx} className="bg-muted/30 backdrop-blur-md border rounded-xl shadow-sm">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold">
+            {slot?.clientDetails?.name || "Unnamed Client"}
+          </CardTitle>
+          {slot?.clientDetails?.web && (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Globe className="h-4 w-4" /> Web
+            </Badge>
+          )}
+        </div>
+        <div className="flex gap-2 mt-2">
+          {slot?.clientDetails?.status && (
+            <Badge
+              className={`${statusColor[slot?.clientDetails.status?.toLowerCase()] || "bg-gray-500"} text-white capitalize`}
+            >
+              {slot?.clientDetails.status}
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm text-muted-foreground">
+        <div><strong>Email:</strong> {slot?.clientDetails?.email || "N/A"}
+          {slot?.clientDetails?.email && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="ml-2"
+              onClick={()=>handleCopyEmail(slot?.clientDetails?.email)}
+              title="Copy Email"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div><strong>Phone:</strong> {slot?.clientDetails?.phone || "N/A"}
+         {slot?.clientDetails?.email && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="ml-2"
+              onClick={()=>handleCopyEmail(slot?.clientDetails?.phone)}
+              title="Copy Email"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div><strong>Service:</strong> {slot?.clientDetails?.service || "N/A"}</div>
+        <div><strong>Slot:</strong> {slot?.time || "N/A"}</div>
+        <div><strong>Price:</strong> {slot?.clientDetails?.price || "N/A"}</div>
+
+        <div className="pt-4 flex justify-end">
+          <Button
+            size="sm"
+            onClick={() => {
+              setData(slot?.clientDetails);
+              setBookingDialogOpen(true);
+              setDrawerOpen(false);
+            }}
+          >
+            Edit Booking
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+              ))
+            ) : (
+              <p className="text-muted-foreground">No bookings for this date.</p>
+            )}
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Booking Edit Dialog */}
+      <BookingDialog
+        open={bookingDialogOpen}
+        setOpen={setBookingDialogOpen}
+        data={data}
+      />
+
+
+
+
+
     </div>
   );
 }

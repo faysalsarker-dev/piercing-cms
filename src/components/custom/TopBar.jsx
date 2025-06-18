@@ -78,14 +78,14 @@ export default function TopBar() {
               <div className="text-xs text-gray-500">{user?.email}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            {/* <DropdownMenuItem>
               <User className="w-4 h-4 mr-2" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            </DropdownMenuItem> */}
+            {/* <DropdownMenuItem>
               <Settings className="w-4 h-4 mr-2" />
               Settings
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:bg-red-100">
               <LogOut className="w-4 h-4 mr-2" />

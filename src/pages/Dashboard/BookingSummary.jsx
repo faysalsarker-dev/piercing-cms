@@ -29,7 +29,7 @@ const BookingSummary = ({ data }) => {
     },
     {
       label: "Total Revenue",
-      value: `$${data.totalRevenue}`,
+      value: `${data.totalRevenue}`,
       icon: DollarSign,
       color: "text-yellow-500 bg-yellow-100 dark:bg-yellow-900",
     },

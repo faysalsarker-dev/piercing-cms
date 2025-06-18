@@ -14,6 +14,20 @@ import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
+const pageOptions = [
+  { label: "Home", value: "/" },
+   { label: "Booking", value: "/booking" },
+  { label: "Needle Piercing", value: "/needle-piercing" },
+  { label: "Gun Piercing", value: "/gun-piercing" },
+  { label: "Microneedling", value: "/microneedling" },
+  { label: "Lash Lift", value: "/lash-lift" },
+  { label: "Herrfrisyr", value: "/herrfrisyr" },
+ 
+];
+
+
+
+
 export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
   const {
     register,
@@ -54,7 +68,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
     }
   }, [offerData, reset]);
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isLoading,isPending } = useMutation({
     mutationFn: async (formData) => {
       const res = await axiosCommon.put(`/banners/${offerData._id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -82,21 +96,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
     }
   };
 
-  const handleAddPath = () => {
-    setValue('displayOn', [...displayOn, '']);
-  };
 
-  const handlePathChange = (value, index) => {
-    const updatedPaths = [...displayOn];
-    updatedPaths[index] = value;
-    setValue('displayOn', updatedPaths);
-  };
-
-  const handleRemovePath = (index) => {
-    const updatedPaths = [...displayOn];
-    updatedPaths.splice(index, 1);
-    setValue('displayOn', updatedPaths);
-  };
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -144,7 +144,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
             <Input placeholder="/shop" {...register('redirectUrl')} />
           </div>
 
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <Label>Display On Paths</Label>
             <div className="space-y-2">
               {displayOn.map((path, index) => (
@@ -163,7 +163,39 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
                 Add Path
               </Button>
             </div>
-          </div>
+          </div> */}
+
+
+{/* Display On Pages with Checkbox Selection */}
+<div className="space-y-1">
+  <Label>Display On Pages</Label>
+  <div className="grid grid-cols-2 gap-2">
+    {pageOptions.map(({ label, value }) => {
+      const isChecked = displayOn.includes(value);
+      return (
+        <div key={value} className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id={value}
+            checked={isChecked}
+            onChange={() => {
+              if (isChecked) {
+                setValue('displayOn', displayOn.filter(p => p !== value));
+              } else {
+                setValue('displayOn', [...displayOn, value]);
+              }
+            }}
+            className="accent-primary w-4 h-4"
+          />
+          <label htmlFor={value} className="text-sm cursor-pointer">
+            {label}
+          </label>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
 
           <div className="flex items-center gap-3">
             <Label htmlFor="isActive">Active</Label>
@@ -188,8 +220,8 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? "Updating..." : "Update"}
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
         </form>

@@ -19,6 +19,7 @@ import Protector from "./Protector";
 import OfferBanner from "@/pages/offerBanner/OfferBanner";
 import BlogCreatePage from "@/pages/Blogs/BlogCreatePage";
 import UpdateBlogPost from "@/pages/Blogs/UpdateBlogPost";
+import FaqManager from "@/pages/faq/FaqManager";
 
 
 const router = createBrowserRouter([
@@ -85,6 +86,10 @@ element:<OfferBanner/>
       {
         path: "/review",
         element: <ClientReview />,
+      },
+      {
+        path: "/faq",
+        element: <FaqManager />,
       },
   
      

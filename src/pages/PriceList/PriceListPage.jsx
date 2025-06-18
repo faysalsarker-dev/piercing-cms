@@ -4,14 +4,7 @@ import PriceListTable from "./PriceListTable";
 import { useState } from "react";
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CardHeader, CardTitle } from "@/components/ui/card";
+
 
 export default function PriceListPage() {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -34,20 +27,7 @@ export default function PriceListPage() {
          
       </div>
 
-      <CardHeader className="flex flex-row justify-between items-center bg-white">
-             <CardTitle>Price List</CardTitle>
-             <Select defaultValue="all">
-               <SelectTrigger className="w-[250px]">
-                 <SelectValue placeholder="Filter by category" />
-               </SelectTrigger>
-               <SelectContent>
-                 <SelectItem value="all">All Categories</SelectItem>
-                 <SelectItem value="needles piercing">Needles Piercing</SelectItem>
-                 <SelectItem value="piercing with gun">Piercing with Gun</SelectItem>
-                 <SelectItem value="microlidding">Microlidding</SelectItem>
-               </SelectContent>
-             </Select>
-           </CardHeader>
+   
 
 
 

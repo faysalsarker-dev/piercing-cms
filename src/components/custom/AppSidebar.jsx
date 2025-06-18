@@ -18,11 +18,24 @@ import logo from "../../assets/logo.png";
 import developer from "../../assets/developer.jpg";
 
 
-
+import { FaQuestion } from "react-icons/fa";
 import { FaStackOverflow } from "react-icons/fa";
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlinePicture, AiOutlineDollarCircle, AiOutlineBook, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { MdOutlineReviews ,MdOutlineTableView ,MdOutlineLocalOffer } from "react-icons/md";
+import useAuth from "@/hooks/useAuth/useAuth";
+import { useUser } from "@/hooks/useUser";
 
+
+
+
+
+
+export function AppSidebar() {
+  const location = useLocation();
+  const { open } = useSidebar();
+  const {user}= useAuth()
+  const { data , isLoading} = useUser(user?.email);
+  
 const items = [
   {
     title: "Dashboard",
@@ -65,9 +78,9 @@ const items = [
     icon: MdOutlineLocalOffer ,
   },
   {
-    title: "Users",
-    url: "/users",
-    icon: AiOutlineUsergroupAdd,
+    title: "Faq",
+    url: "/faq",
+    icon: FaQuestion,
   },
   {
     title: "Testimonials",
@@ -77,11 +90,13 @@ const items = [
 ];
 
 
-
-
-export function AppSidebar() {
-  const location = useLocation();
-  const { open } = useSidebar();
+  if (data?.role === "admin" && !isLoading ) {
+  items.splice(8, 0, {
+    title: "Users",
+    url: "/users",
+    icon: AiOutlineUsergroupAdd,
+  });
+}
 
   return (
     <Sidebar collapsible="icon">

@@ -12,9 +12,10 @@ import PropTypes from "prop-types";
 import useAxios from "@/hooks/useAxios";
 import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
+import dayjs from "dayjs";
 
 
-export default function BookingDialog({ open, setOpen, data }) {
+export default function BookingDialog({ open, setOpen, data ,refetch}) {
   const axiosCommon = useAxios();
 
   const [status, setStatus] = useState(data?.status || "");
@@ -31,6 +32,7 @@ export default function BookingDialog({ open, setOpen, data }) {
     },
     onSuccess: () => {
       toast.success("Updated!", "Status has been updated successfully.", "success");
+      refetch?.()
     },
     onError: (error) => {
       toast.error("Error", error?.response?.data?.message || "Something went wrong", "error");
@@ -57,6 +59,19 @@ export default function BookingDialog({ open, setOpen, data }) {
     });
   };
 
+  const renderWeb = (web) => (
+    <span
+      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+        web === "klippsodermalm"
+          ? "bg-orange-100 text-orange-800"
+          : "bg-gray-400 text-gray-950"
+      }`}
+    >
+      {web}
+    </span>
+  );
+
+
   return (
 <>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -68,11 +83,11 @@ export default function BookingDialog({ open, setOpen, data }) {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center">
-                <p>
-                  <strong>Name:</strong> {data?.name || "N/A"}
-                </p>
-              </div>
+             
+                
+                   <div className="font-semibold text-lg flex justify-between items-center"><div>{data?.name}</div><div>{renderWeb(data?.web)}</div></div>
+               
+             
               <p>
                 <strong>Email:</strong> {data?.email || "N/A"}
               </p>
@@ -86,7 +101,10 @@ export default function BookingDialog({ open, setOpen, data }) {
                 <strong>Price:</strong> ${data?.price ?? "N/A"}
               </p>
               <p>
-                <strong>Booking Date:</strong> {data?.bookingDate || "N/A"}
+                <strong>Booking Date: </strong>
+                
+                 {dayjs(data?.bookingDate).format("MMM D, YYYY")}
+                
               </p>
               <p>
                 <strong>Slot:</strong> {data?.slot || "N/A"}
@@ -135,6 +153,7 @@ export default function BookingDialog({ open, setOpen, data }) {
 BookingDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
+  refetch: PropTypes.func,
   data: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     name: PropTypes.string,
@@ -145,6 +164,7 @@ BookingDialog.propTypes = {
     bookingDate: PropTypes.string,
     slot: PropTypes.string,
     status: PropTypes.string,
+    web: PropTypes.string,
   }),
 };
 

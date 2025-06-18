@@ -1,11 +1,9 @@
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-import toast from "react-hot-toast";
-import Swal from "sweetalert2";
+
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import useAxios from "@/hooks/useAxios";
-import { Pencil } from "lucide-react";
+
+import { Pencil, Trash2 } from "lucide-react";
 
 import {
   Pagination,
@@ -24,23 +22,23 @@ import {
   TableRow,
 } from "../ui/table";
 
-import BookingHandler from "./BookingHandler";
+
 import BookingDialog from "./BookingDialog";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { Button } from "../ui/button";
+
 
 const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
   const totalPages = Math.ceil(total / limit);
-  const [bookingData, setBookingData] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
+ 
   const [dataInfo, setDataInfo] = useState({});
  
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
 
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
-
-  const onEdit = (booking) => {
-    setBookingData(booking);
-    setOpenDialog(true);
-  };
+ 
 
 
   const renderStatusBadge = (status) => (
@@ -55,23 +53,39 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
     </span>
   );
 
+  const renderWeb = (web) => (
+    <span
+      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+        web === "klippsodermalm"
+          ? "bg-orange-100 text-orange-800"
+          : "bg-gray-400 text-gray-950"
+      }`}
+    >
+      {web}
+    </span>
+  );
+
   const renderBookingInfo = (booking, isMobile = false) => (
     <>
-      <div className="font-semibold text-lg">{booking.name}</div>
-      <div className="text-sm text-gray-600">{booking.phone}</div>
-      <div className="text-sm">{booking.email || "-"}</div>
-      <div className="text-sm">Service: {booking.service}</div>
-      <div className="text-sm">Price: ${booking.price}</div>
+      <div className="font-semibold text-lg flex justify-between items-center"><div>{booking.name}</div><div>{renderWeb(booking?.web)}</div></div>
+      <div className="text-sm text-gray-600">{booking?.phone}</div>
+      <div className="text-sm">{booking?.email || "-"}</div>
+      <div className="text-sm">Service: {booking?.service}</div>
+      <div className="text-sm">Price: {booking?.price}</div>
       <div className="text-sm">
-        Date: {dayjs(booking.bookingDate).format("MMM D, YYYY")}
+        Date: {dayjs(booking?.bookingDate).format("MMM D, YYYY")}
       </div>
-      <div className="text-sm">Slot: {booking.slot}</div>
-      <div className="text-sm font-medium">{renderStatusBadge(booking.status)}</div>
-      {!isMobile && (
-        <button onClick={() => onEdit(booking)} className="text-primary hover:text-primary/80">
-          <Pencil size={18} />
-        </button>
-      )}
+      <div className="text-sm">Slot: {booking?.slot}</div>
+      <div className="text-sm font-medium">{renderStatusBadge(booking?.status)}</div>
+   <Button
+                     onClick={() => {
+                          setDeleteId(booking?._id);
+                          setOpen(true);
+                        }}
+                
+                size="icon" variant="ghost" className="text-red-500">
+                  <Trash2 className="w-10 h-10" />
+                </Button>
     </>
   );
 
@@ -87,7 +101,11 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
             >
               <button
                 className="absolute top-2 right-2 text-primary hover:text-primary/80"
-                onClick={() => onEdit(booking)}
+                onClick={() => {
+                    setDataInfo(booking);
+  setBookingDialogOpen(true);
+  
+                }}
               >
                 <Pencil size={18} />
               </button>
@@ -104,31 +122,54 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
         <Table>
           <TableHeader>
             <TableRow>
-              {["Name", "Phone", "Email", "Service", "Price", "Booking Date", "Slot", "Status", "Edit"].map((head) => (
+              {["Name", "Info","Web", "Service", "Price", "Booking Date", "Slot", "Status", "Edit"].map((head) => (
                 <TableHead className='bg-gray-200' key={head}>{head}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.length > 0 ? (
-              data.map((booking) => (
-                <TableRow key={booking._id} className="h-16">
-                  <TableCell>{booking.name}</TableCell>
-                  <TableCell>{booking.phone}</TableCell>
-                  <TableCell>{booking.email || "-"}</TableCell>
-                  <TableCell>{booking.service}</TableCell>
-                  <TableCell>${booking.price}</TableCell>
-                  <TableCell>{dayjs(booking.bookingDate).format("MMM D, YYYY")}</TableCell>
-                  <TableCell>{booking.slot}</TableCell>
-                  <TableCell>{renderStatusBadge(booking.status)}</TableCell>
+            {data?.length > 0 ? (
+              data?.map((booking) => (
+                <TableRow key={booking?._id} className="h-16">
+                  <TableCell>{booking?.name}</TableCell>
                   <TableCell>
-                    <button onClick={() => {
+                    {booking?.phone}
+                    <br />
+{booking?.email || "-"}
+
+                  </TableCell>
+                 
+                  <TableCell>{renderWeb(booking?.web)}</TableCell>
+                  <TableCell>{booking?.service}</TableCell>
+                  <TableCell>{booking?.price}</TableCell>
+                  <TableCell>{dayjs(booking?.bookingDate).format("MMM D, YYYY")}</TableCell>
+                  <TableCell>{booking?.slot}</TableCell>
+                  <TableCell>{renderStatusBadge(booking?.status)}</TableCell>
+
+                  <TableCell className='flex justify-center items-center'>
+                    <Button
+                    size="icon" variant="ghost"
+                    
+              onClick={() => {
   setDataInfo(booking);
   setBookingDialogOpen(true);
   
 }}>
   <Pencil className="w-4 h-4 text-primary" />
-</button>
+</Button>
+
+
+
+  <Button
+                     onClick={() => {
+                          setDeleteId(booking?._id);
+                          setOpen(true);
+                        }}
+                
+                size="icon" variant="ghost" className="text-red-500">
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+
                   </TableCell>
                 </TableRow>
               ))
@@ -143,12 +184,7 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
         </Table>
       </div>
 
-     <BookingHandler
-  booking={bookingData}
-  open={openDialog}
-  onClose={() => setOpenDialog(false)}
-  refetch={refetch}
-/>
+
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination>
@@ -189,9 +225,16 @@ const BookTable = ({ data = [], total, page, limit, onPageChange ,refetch}) => {
         </Pagination>
       )}
 
+   <DeleteConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        id={deleteId}
+        url="/online-booking"
+        refetch={refetch}
+      />
 
 
-      <BookingDialog open={bookingDialogOpen} setOpen={setBookingDialogOpen} data={dataInfo} />
+      <BookingDialog open={bookingDialogOpen} setOpen={setBookingDialogOpen} data={dataInfo} refetch={refetch}/>
       
     </div>
   );

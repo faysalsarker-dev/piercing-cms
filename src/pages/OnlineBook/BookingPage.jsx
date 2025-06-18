@@ -123,11 +123,11 @@ export default function BookingPage() {
       <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end ">
         <div>
           <label htmlFor="search" className="block mb-1 font-medium">
-            Search (Name or Phone)
+            Search (Name Email or Phone)
           </label>
           <Input
             id="search"
-            placeholder="Search by name or phone"
+            placeholder="Search by name email or phone"
             defaultValue=""
             {...register('search')}
             className='bg-white'

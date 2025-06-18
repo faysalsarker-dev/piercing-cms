@@ -14,6 +14,20 @@ import toast from 'react-hot-toast';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+const pageOptions = [
+  { label: "Home", value: "/" },
+  { label: "Booking", value: "/booking" },
+  { label: "Needle Piercing", value: "/needle-piercing" },
+  { label: "Gun Piercing", value: "/gun-piercing" },
+  { label: "Microneedling", value: "/microneedling" },
+  { label: "Lash Lift", value: "/lash-lift" },
+  { label: "Herrfrisyr", value: "/herrfrisyr" },
+  
+];
+
+
+
+
 export default function CreateOffer({ open, setOpen,refetch }) {
   const {
     register,
@@ -66,21 +80,10 @@ export default function CreateOffer({ open, setOpen,refetch }) {
     }
   };
 
-  const handleAddPath = () => {
-    setValue('displayOn', [...displayOn, '']);
-  };
+ 
 
-  const handlePathChange = (value, index) => {
-    const updatedPaths = [...displayOn];
-    updatedPaths[index] = value;
-    setValue('displayOn', updatedPaths);
-  };
 
-  const handleRemovePath = (index) => {
-    const updatedPaths = [...displayOn];
-    updatedPaths.splice(index, 1);
-    setValue('displayOn', updatedPaths);
-  };
+
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -132,27 +135,39 @@ export default function CreateOffer({ open, setOpen,refetch }) {
             <Input placeholder="/shop" {...register('redirectUrl')} />
           </div>
 
-          {/* Display On (Array of Paths) */}
-          <div className="space-y-1">
-            <Label>Display On Paths</Label>
-            <div className="space-y-2">
-              {displayOn.map((path, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Input
-                    value={path}
-                    onChange={(e) => handlePathChange(e.target.value, index)}
-                    placeholder="/home"
-                  />
-                  <Button type="button" variant="destructive" onClick={() => handleRemovePath(index)}>
-                    Remove
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="outline" onClick={handleAddPath}>
-                Add Path
-              </Button>
-            </div>
-          </div>
+         
+
+{/* Display On Paths Selection */}
+<div className="space-y-1">
+  <Label>Display On Pages</Label>
+  <div className="grid grid-cols-2 gap-2">
+    {pageOptions.map(({ label, value }) => {
+      const isChecked = displayOn.includes(value);
+      return (
+        <div key={value} className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id={value}
+            checked={isChecked}
+            onChange={() => {
+              if (isChecked) {
+                setValue('displayOn', displayOn.filter(p => p !== value));
+              } else {
+                setValue('displayOn', [...displayOn, value]);
+              }
+            }}
+            className="accent-primary w-4 h-4"
+          />
+          <label htmlFor={value} className="text-sm cursor-pointer">
+            {label}
+          </label>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+
 
           {/* Is Active Switch */}
           <div className="flex items-center gap-3">
