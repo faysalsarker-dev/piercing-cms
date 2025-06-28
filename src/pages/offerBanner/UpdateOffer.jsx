@@ -13,19 +13,31 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const pageOptions = [
-  { label: "Home", value: "/" },
-   { label: "Booking", value: "/booking" },
-  { label: "Needle Piercing", value: "/needle-piercing" },
-  { label: "Gun Piercing", value: "/gun-piercing" },
-  { label: "Microneedling", value: "/microneedling" },
-  { label: "Lash Lift", value: "/lash-lift" },
-  { label: "Herrfrisyr", value: "/herrfrisyr" },
- 
+  { label: "Home - Klip Södermalm", value: "/" },
+  { label: "Booking - Klip Södermalm", value: "/booking" },
+  { label: "Needle Piercing - Klip Södermalm", value: "/needle-piercing" },
+  { label: "Gun Piercing - Klip Södermalm", value: "/gun-piercing" },
+  { label: "Microneedling - Klip Södermalm", value: "/microneedling" },
+  { label: "Lash Lift - Klip Södermalm", value: "/lash-lift" },
+  { label: "Herrfrisyr - Klip Södermalm", value: "/herrfrisyr" },
+  { label: "Home - Piercing Södermalm", value: "/" },
+  { label: "Piercing med Nål - Piercing Södermalm", value: "/piercing" },
+  { label: "Öronhåltagning med pistol - Piercing Södermalm", value: "/oronhåltagning" },
+  { label: "Booking - Piercing Södermalm", value: "/online-booking" },
+  { label: "Silver smycke - Piercing Södermalm", value: "/silver-smycke" },
+  { label: "After care - Piercing Södermalm", value: "/after-care" },
+
+  
 ];
 
-
+const WEB_OPTIONS = [
+  { value: "piercingsodermalm", label: "Piercing Södermalm" },
+  { value: "klippsodermalm", label: "Klip Södermalm" },
+  { value: "both", label: "Both" },
+];
 
 
 export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
@@ -41,7 +53,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
       title: '',
       content: '',
       image: null,
-      redirectUrl: '/',
+      redirectUrl: '',
       displayOn: [],
       isActive: true,
     },
@@ -68,7 +80,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
     }
   }, [offerData, reset]);
 
-  const { mutate, isLoading,isPending } = useMutation({
+  const { mutate ,isPending } = useMutation({
     mutationFn: async (formData) => {
       const res = await axiosCommon.put(`/banners/${offerData._id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -104,6 +116,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
     formData.append("content", data.content);
     formData.append("redirectUrl", data.redirectUrl);
     formData.append("isActive", data.isActive);
+    formData.append("web", data.web);
     if (data.image) {
       formData.append("image", data.image);
     }
@@ -144,26 +157,7 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
             <Input placeholder="/shop" {...register('redirectUrl')} />
           </div>
 
-          {/* <div className="space-y-1">
-            <Label>Display On Paths</Label>
-            <div className="space-y-2">
-              {displayOn.map((path, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Input
-                    value={path}
-                    onChange={(e) => handlePathChange(e.target.value, index)}
-                    placeholder="/home"
-                  />
-                  <Button type="button" variant="destructive" onClick={() => handleRemovePath(index)}>
-                    Remove
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="outline" onClick={handleAddPath}>
-                Add Path
-              </Button>
-            </div>
-          </div> */}
+ 
 
 
 {/* Display On Pages with Checkbox Selection */}
@@ -207,6 +201,38 @@ export default function UpdateOffer({ open, setOpen, offerData, refetch }) {
               )}
             />
           </div>
+
+
+  <div className="space-y-1">
+                <Label htmlFor="web">Web</Label>
+                <Controller
+                  name="web"
+                  control={control}
+                  rules={{ required: "Web type is required" }}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue=""
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select web type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WEB_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+       
+              </div>
+
+
+
 
           <div className="space-y-1">
             <Label>Content</Label>

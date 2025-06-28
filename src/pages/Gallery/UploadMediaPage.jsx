@@ -7,6 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import useAxios from "@/hooks/useAxios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const WEB_OPTIONS = [
+  { value: "piercingsodermalm", label: "Piercing Södermalm" },
+  { value: "klippsodermalm", label: "Klip Södermalm" },
+  { value: "both", label: "Both" },
+];
+
 
 const UploadMediaPage = () => {
   const axiosCommon = useAxios();
@@ -16,6 +24,7 @@ const UploadMediaPage = () => {
   const [type, setType] = useState("");
   const [status, setStatus] = useState("active");
   const [serial, setSerial] = useState("");
+  const [web , setWeb] = useState("");
 const navigate = useNavigate();
 
 
@@ -61,7 +70,7 @@ const navigate = useNavigate();
   });
 
   const handleUpload = () => {
-    if ((!mediaFile && !urlInput) || !type || !serial) {
+    if ((!mediaFile && !urlInput) || !type || !serial || !web) {
       toast.error("Please fill all fields.");
       return;
     }
@@ -73,6 +82,7 @@ const navigate = useNavigate();
     formData.append("type", type);
     formData.append("status", status);
     formData.append("serial", serial);
+    formData.append("web", web);
 
     uploadMedia(formData);
   };
@@ -136,6 +146,27 @@ const navigate = useNavigate();
               placeholder="Enter serial number"
             />
           </div>
+
+   <div className="space-y-1">
+                <Label htmlFor="web">Web</Label>
+
+<Select value={web} onValueChange={setWeb} className="w-full">
+  <SelectTrigger className="w-full">
+    <SelectValue placeholder="web" />
+  </SelectTrigger>
+  <SelectContent>
+     {WEB_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+  </SelectContent>
+</Select>
+
+
+            
+              </div>
+
 
           <div>
             <Label htmlFor="status">Status</Label>

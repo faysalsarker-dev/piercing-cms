@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -15,6 +15,18 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import RichTextEditor from "@/components/custom/RichTextEditor";
 import useAxios from "@/hooks/useAxios";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+
+
+const WEB_OPTIONS = [
+  { value: "piercingsodermalm", label: "Piercing Södermalm" },
+  { value: "klippsodermalm", label: "Klip Södermalm" },
+  { value: "both", label: "Both" },
+];
+
+
+
 
 const slugify = (text) =>
   text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -77,6 +89,7 @@ const onSubmit = (data) => {
   formData.append("title", data.title);
   formData.append("slug", slugify(data.title));
   formData.append("content", data.description);
+  formData.append("web", data.web || "both");
 
   formData.append("seo[title]", data.seoTitle || data.title);
   formData.append("seo[description]", data.seoDescription || "");
@@ -95,11 +108,6 @@ formData.append(
     formData.append("image", data.image[0]);
   }
 
-  console.log("Submitting blog post with data:", data);
-
-  for (const [key, value] of formData.entries()) {
-    console.log(`${key}:`, value);
-  }
 
   mutate(formData);
 };
@@ -162,6 +170,40 @@ formData.append(
            
             <RichTextEditor className='w-full' value={description} onChange={(val) => setValue("description", val)} />
           </div>
+
+
+   <div className="space-y-1">
+                <Label htmlFor="web">Web</Label>
+                <Controller
+                  name="web"
+                  control={control}
+                  rules={{ required: "Web type is required" }}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue=""
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select web type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WEB_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.web && (
+                  <p className="text-sm text-red-500">
+                    {errors.web.message}
+                  </p>
+                )}
+              </div>
+
 
           {/* SEO Settings */}
           <div className="border-t pt-4 space-y-4">

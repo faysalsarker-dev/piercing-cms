@@ -27,7 +27,7 @@ export default function BookingDialog({ open, setOpen, data ,refetch}) {
 
   const updateStatusMutation = useMutation({
     mutationFn: async (newStatus) => {
-      const res = await axiosCommon.put(`/online-booking/${data._id}`, { status: newStatus });
+      const res = await axiosCommon.put(`/online-booking/${data._id}?auth=admin`, { status: newStatus });
       return res.data;
     },
     onSuccess: () => {
